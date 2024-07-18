@@ -13,7 +13,7 @@ export type CalendarProps = Omit<CalendarOptions, 'plugins'> & {
   calendarRef: MutableRefObject<FullCalendar | null>
 }
 
-export const Calendar = ({ calendarRef, ...props }: CalendarProps) => {
+export const EventCalendar = ({ calendarRef, ...props }: CalendarProps) => {
   const { width, height } = useWindowSize()
   const viewDeterministicProps = getCalendarProps(width)
 
