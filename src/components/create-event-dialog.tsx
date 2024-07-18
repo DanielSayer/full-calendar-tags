@@ -20,15 +20,34 @@ import { DatePicker } from './date-picker'
 import { z } from 'zod'
 import { createEventSchema } from '@/lib/validations/events'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
+import { createEvent } from '@/actions/createEvent'
 
-type FormData = z.infer<typeof createEventSchema>
+export type Event = z.infer<typeof createEventSchema>
 
-const CreateEventDialog = (props: { toggle: () => void }) => {
-  const form = useForm<FormData>({ resolver: zodResolver(createEventSchema) })
+const CreateEventDialog = (props: {
+  toggle: () => void
+  refetch: () => void
+}) => {
+  const form = useForm<Event>({
+    defaultValues: {
+      name: '',
+      startTime: '',
+      endTime: ''
+    },
+    resolver: zodResolver(createEventSchema)
+  })
 
-  const onSubmit = (data: FormData) => {
-    console.log(data)
-    props.toggle()
+  const { isPending, mutateAsync } = useMutation({
+    mutationFn: createEvent,
+    onSuccess: () => {
+      props.refetch()
+      props.toggle()
+    }
+  })
+
+  const onSubmit = async (data: Event) => {
+    await mutateAsync(data)
   }
 
   return (
@@ -53,6 +72,7 @@ const CreateEventDialog = (props: { toggle: () => void }) => {
                         type="text"
                         autoCapitalize="none"
                         autoCorrect="off"
+                        disabled={isPending}
                         {...field}
                       />
                     </FormControl>
@@ -69,7 +89,7 @@ const CreateEventDialog = (props: { toggle: () => void }) => {
                   <FormItem className="w-full space-y-1">
                     <FormLabel>Start Time</FormLabel>
                     <FormControl>
-                      <Input type="time" {...field} />
+                      <Input type="time" {...field} disabled={isPending} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -82,7 +102,7 @@ const CreateEventDialog = (props: { toggle: () => void }) => {
                   <FormItem className="w-full space-y-1">
                     <FormLabel>End Time</FormLabel>
                     <FormControl>
-                      <Input type="time" {...field} />
+                      <Input type="time" {...field} disabled={isPending} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -117,7 +137,7 @@ const CreateEventDialog = (props: { toggle: () => void }) => {
             <LoadingButton
               type="submit"
               loadingText="Creating..."
-              isLoading={false}
+              isLoading={isPending}
             >
               Create
             </LoadingButton>

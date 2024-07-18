@@ -9,7 +9,10 @@ import {
   DialogTrigger
 } from './ui/dialog'
 
-const CreateEventButton = (props: { className?: string }) => {
+const CreateEventButton = (props: {
+  className?: string
+  refetch: () => void
+}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const toggle = () => setIsOpen(!isOpen)
   return (
@@ -28,7 +31,7 @@ const CreateEventButton = (props: { className?: string }) => {
         </div>
       </DialogTrigger>
       <DialogContent>
-        <CreateEventDialog toggle={toggle} />
+        <CreateEventDialog toggle={toggle} refetch={props.refetch} />
         <DialogDescription className="sr-only">
           Create a new event
         </DialogDescription>
