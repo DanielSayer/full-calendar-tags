@@ -1,0 +1,121 @@
+/* Primary Button */
+
+.fc .fc-button-primary {
+  background-color: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+  color: hsl(var(--accent));
+}
+
+.fc .fc-button-primary:hover {
+  background-color: hsl(from hsl(var(--primary)) h s 57);
+  border-color: hsl(var(--primary));
+  color: hsl(var(--foreground));
+}
+
+.fc .fc-button-primary:disabled {
+  background-color: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+  color: hsl(var(--accent));
+}
+
+.fc .fc-button-primary:focus {
+  box-shadow: hsl(var(--primary)) 0px 0px 0px 0.2rem;
+}
+
+.fc .fc-button-primary:not(:disabled):active,
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  background-color: hsl(from hsl(var(--primary)) h s 54.5);
+  border-color: hsl(var(--primary));
+  color: hsl(var(--accent));
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active:focus {
+  box-shadow: hsl(var(--primary)) 0px 0px 0px 0.2rem;
+}
+
+/* Primary Button Dark Mode */
+
+.dark .fc .fc-button-primary {
+  background-color: transparent;
+  border-color: hsl(var(--border));
+  color: hsl(var(--foreground));
+}
+
+.dark .fc .fc-button-primary:hover {
+  background-color: transparent;
+  border-color: hsl(var(--primary));
+  color: hsl(var(--foreground));
+}
+
+.dark .fc .fc-button-primary:disabled {
+  background-color: hsl(var(--muted));
+  border-color: hsl(var(--border));
+  color: hsl(var(--accent-foreground));
+}
+
+.dark .fc .fc-button-primary:not(:disabled):active,
+.dark .fc .fc-button-primary:not(:disabled).fc-button-active {
+  background-color: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+  color: hsl(var(--foreground));
+}
+
+/* Today fills */
+
+.dark .fc .fc-daygrid-day.fc-day-today {
+  background-color: hsl(from hsl(var(--primary)) h 85 80 / 0.3);
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+  background-color: hsl(from hsl(var(--primary)) h s 90);
+}
+
+.dark .fc .fc-timegrid-col.fc-day-today {
+  background-color: hsl(from hsl(var(--primary)) h 85 80 / 0.3);
+}
+
+.fc .fc-timegrid-col.fc-day-today {
+  background-color: hsl(from hsl(var(--primary)) h s 90);
+}
+
+/* Grid styles */
+
+.fc-theme-standard .fc-scrollgrid {
+  border: 1px solid hsl(var(--border));
+}
+
+.fc .fc-scrollgrid {
+  border-bottom-width: 0px;
+  border-collapse: separate;
+  border-right-width: 0px;
+}
+
+.fc-theme-standard td,
+.fc-theme-standard th {
+  border: 1px solid hsl(var(--border));
+}
+
+.fc .fc-timegrid-slot-minor {
+  border-top-style: dashed;
+}
+
+.fc .fc-timegrid-now-indicator-line,
+.fc .fc-timegrid-now-indicator-arrow {
+  border-color: hsl(var(--primary));
+  border-width: 1.5px;
+}
+
+.fc-direction-ltr .fc-timegrid-now-indicator-arrow {
+  border-bottom-color: transparent;
+  border-top-color: transparent;
+  border-width: 5px 0px 5px 6px;
+  left: 0px;
+}
+
+/* Event Overrides */
+.fc-timegrid-event .fc-event-time {
+  font-weight: 700;
+}
+.fc-v-event .fc-event-title {
+  font-weight: 650;
+}

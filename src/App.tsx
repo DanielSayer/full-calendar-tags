@@ -1,5 +1,13 @@
+import { Calendar } from './components/calendar'
+import useCalendar from './hooks/useCalendar'
+
 function App() {
-  return <div>Hello World</div>
+  const { calendarRef } = useCalendar()
+  return (
+    <div className="p-4">
+      <Calendar calendarRef={calendarRef} />
+    </div>
+  )
 }
 
 export default App
