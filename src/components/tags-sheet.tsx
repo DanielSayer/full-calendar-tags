@@ -31,7 +31,7 @@ import LoadingButton from './loading-button'
 
 export type Tag = z.infer<typeof createTagSchema>
 
-export function TagsSheet() {
+export function CreateTagForm(props: { refetch: () => void }) {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const form = useForm<Tag>({
     defaultValues: { name: '', colour: '#7C3AED' },
@@ -41,6 +41,7 @@ export function TagsSheet() {
   const { isPending, mutateAsync } = useMutation({
     mutationFn: createTag,
     onSuccess: () => {
+      props.refetch()
       setIsOpen(false)
       form.reset()
     },
@@ -59,7 +60,7 @@ export function TagsSheet() {
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button variant="outline">
-          <Icons.add className="me-2" /> Add tag
+          <Icons.add className="me-2 h-4 w-4" /> Add tag
         </Button>
       </SheetTrigger>
       <SheetContent>

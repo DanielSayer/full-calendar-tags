@@ -4,7 +4,7 @@ import { delay } from '@/lib/utils'
 export const getTags = async () => {
   await delay(250)
   const tags = JSON.parse(localStorage.getItem('tags') || '[]') as Tag[]
-  return tags
+  return tags.sort((a, b) => a.name.localeCompare(b.name))
 }
 
 export const createTag = async (tag: Tag) => {
