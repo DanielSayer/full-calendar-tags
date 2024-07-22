@@ -18,7 +18,7 @@ export const TagsSection = () => {
   })
   return (
     <Card>
-      <CardHeader className="p-2 space-y-0">
+      <CardHeader className="space-y-0 p-2">
         <CardTitle className="text-lg">Tags</CardTitle>
         <CardDescription className="text-sm">
           Drag and drop a tag to an event.
@@ -50,7 +50,7 @@ const Tags = (props: { isLoading: boolean; tags: Tag[] }) => {
       {props.tags.map((tag) => (
         <div key={tag.name} className="flex items-center gap-2">
           <span
-            className="inline-block w-2 h-2 rounded-full"
+            className="inline-block h-2 w-2 rounded-full"
             style={{ backgroundColor: tag.colour }}
           />
           <div>{tag.name}</div>
@@ -63,8 +63,8 @@ const Tags = (props: { isLoading: boolean; tags: Tag[] }) => {
 const LoadingTag = () => {
   return (
     <div className="flex items-center gap-2">
-      <Skeleton className="inline-block w-2 h-2 rounded-full" />
-      <Skeleton className="w-full h-4" />
+      <Skeleton className="inline-block h-2 w-2 rounded-full" />
+      <Skeleton className="h-4 w-full" />
     </div>
   )
 }
