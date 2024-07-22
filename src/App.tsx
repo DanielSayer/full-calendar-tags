@@ -1,9 +1,10 @@
 import { Calendar } from '@/components/ui/calendar'
 import { useQuery } from '@tanstack/react-query'
-import { getEvents } from './actions/getEvents'
 import { EventCalendar } from './components/calendar'
 import CreateEventButton from './components/create-event-button'
 import useCalendar from './hooks/useCalendar'
+import { TagsSheet } from './components/tags-sheet'
+import { getEvents } from './actions/events'
 
 function App() {
   const { selectedDate, datesSet, handleSelectDate, calendarRef, dateRange } =
@@ -28,6 +29,7 @@ function App() {
           month={selectedDate}
           onSelect={handleSelectDate}
         />
+        <TagsSheet />
       </div>
       <div className="w-full">
         <CreateEventButton className="lg:hidden" refetch={refetch} />

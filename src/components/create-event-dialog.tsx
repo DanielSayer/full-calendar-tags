@@ -21,7 +21,7 @@ import { z } from 'zod'
 import { createEventSchema } from '@/lib/validations/events'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { createEvent } from '@/actions/createEvent'
+import { createEvent } from '@/actions/events'
 
 export type Event = z.infer<typeof createEventSchema>
 

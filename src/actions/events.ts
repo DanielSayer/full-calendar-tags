@@ -1,6 +1,6 @@
+import type { Event } from '@/components/create-event-dialog'
 import { delay } from '@/lib/utils'
 import { DateRange } from '@/types/misc'
-import type { Event } from '@/components/create-event-dialog'
 
 export const getEvents = async (dateRange: DateRange) => {
   await delay(250)
@@ -22,4 +22,12 @@ export const getEvents = async (dateRange: DateRange) => {
       dateRange.end >= new Date(event.end)
     )
   })
+}
+
+export const createEvent = async (event: Event) => {
+  await delay(500)
+  const events = JSON.parse(
+    localStorage.getItem('events') || '[]'
+  ) as FormData[]
+  localStorage.setItem('events', JSON.stringify([...events, event]))
 }
