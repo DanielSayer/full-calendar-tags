@@ -29,11 +29,12 @@ import { createTag } from '@/actions/tags'
 import { useState } from 'react'
 import LoadingButton from './loading-button'
 
-export type Tag = z.infer<typeof createTagSchema>
+export type Tag = TagRequest & { id: string }
+export type TagRequest = z.infer<typeof createTagSchema>
 
 export function CreateTagForm(props: { refetch: () => void }) {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const form = useForm<Tag>({
+  const form = useForm<TagRequest>({
     defaultValues: { name: '', colour: '#7C3AED' },
     resolver: zodResolver(createTagSchema)
   })
@@ -52,7 +53,7 @@ export function CreateTagForm(props: { refetch: () => void }) {
     }
   })
 
-  const onSubmit = async (data: Tag) => {
+  const onSubmit = async (data: TagRequest) => {
     await mutateAsync(data)
   }
 

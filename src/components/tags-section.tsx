@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { CreateTagForm, Tag } from './tags-sheet'
+import { CreateTagForm, TagRequest } from './tags-sheet'
 import {
   Card,
   CardContent,
@@ -10,6 +10,7 @@ import {
 import { Separator } from './ui/separator'
 import { getTags } from '@/actions/tags'
 import { Skeleton } from './ui/skeleton'
+import { Icons } from './icons'
 
 export const TagsSection = () => {
   const { data, isLoading, refetch } = useQuery({
@@ -35,7 +36,7 @@ export const TagsSection = () => {
   )
 }
 
-const Tags = (props: { isLoading: boolean; tags: Tag[] }) => {
+const Tags = (props: { isLoading: boolean; tags: TagRequest[] }) => {
   if (props.isLoading) {
     return (
       <div className="space-y-3">
@@ -45,8 +46,18 @@ const Tags = (props: { isLoading: boolean; tags: Tag[] }) => {
       </div>
     )
   }
+
+  if (props.tags.length === 0) {
+    return (
+      <div className="grid place-items-center py-3">
+        <Icons.empty className="h-6 w-6 text-muted-foreground" />
+        <div className="text-muted-foreground">No tags yet, create one!</div>
+      </div>
+    )
+  }
+
   return (
-    <div>
+    <div className="max-h-36 overflow-y-auto px-2">
       {props.tags.map((tag) => (
         <div key={tag.name} className="flex items-center gap-2">
           <span

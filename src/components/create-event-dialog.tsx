@@ -23,13 +23,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { createEvent } from '@/actions/events'
 
-export type Event = z.infer<typeof createEventSchema>
+export type Event = EventRequest & { id: string }
+export type EventRequest = z.infer<typeof createEventSchema>
 
 const CreateEventDialog = (props: {
   toggle: () => void
   refetch: () => void
 }) => {
-  const form = useForm<Event>({
+  const form = useForm<EventRequest>({
     defaultValues: {
       name: '',
       startTime: '',
@@ -46,7 +47,7 @@ const CreateEventDialog = (props: {
     }
   })
 
-  const onSubmit = async (data: Event) => {
+  const onSubmit = async (data: EventRequest) => {
     await mutateAsync(data)
   }
 
