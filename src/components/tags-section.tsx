@@ -1,5 +1,9 @@
+import { getTags } from '@/actions/tags'
+import { DragOverlay } from '@dnd-kit/core'
 import { useQuery } from '@tanstack/react-query'
-import { CreateTagForm, TagRequest } from './tags-sheet'
+import Draggable from './draggable'
+import { Icons } from './icons'
+import { CreateTagForm, type Tag } from './tags-sheet'
 import {
   Card,
   CardContent,
@@ -8,11 +12,9 @@ import {
   CardTitle
 } from './ui/card'
 import { Separator } from './ui/separator'
-import { getTags } from '@/actions/tags'
-import { Skeleton } from './ui/skeleton'
-import { Icons } from './icons'
+import { LoadingTag, TagItem } from './tag'
 
-export const TagsSection = () => {
+export const TagsSection = (props: { activeTagId: string | null }) => {
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['tags'],
     queryFn: getTags
@@ -27,7 +29,11 @@ export const TagsSection = () => {
       </CardHeader>
       <Separator />
       <CardContent className="p-2">
-        <Tags tags={data ?? []} isLoading={isLoading} />
+        <Tags
+          tags={data ?? []}
+          isLoading={isLoading}
+          activeTagId={props.activeTagId}
+        />
         <div className="flex justify-end">
           <CreateTagForm refetch={refetch} />
         </div>
@@ -36,7 +42,11 @@ export const TagsSection = () => {
   )
 }
 
-const Tags = (props: { isLoading: boolean; tags: TagRequest[] }) => {
+const Tags = (props: {
+  isLoading: boolean
+  tags: Tag[]
+  activeTagId: string | null
+}) => {
   if (props.isLoading) {
     return (
       <div className="space-y-3">
@@ -57,25 +67,21 @@ const Tags = (props: { isLoading: boolean; tags: TagRequest[] }) => {
   }
 
   return (
-    <div className="max-h-36 overflow-y-auto px-2">
-      {props.tags.map((tag) => (
-        <div key={tag.name} className="flex items-center gap-2">
-          <span
-            className="inline-block h-2 w-2 rounded-full"
-            style={{ backgroundColor: tag.colour }}
-          />
-          <div>{tag.name}</div>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-const LoadingTag = () => {
-  return (
-    <div className="flex items-center gap-2">
-      <Skeleton className="inline-block h-2 w-2 rounded-full" />
-      <Skeleton className="h-4 w-full" />
-    </div>
+    <>
+      <div className="flex flex-col px-2">
+        {props.tags.map((tag) => (
+          <div className="flex">
+            <Draggable key={tag.name} id={tag.id}>
+              <TagItem tag={tag} />
+            </Draggable>
+          </div>
+        ))}
+      </div>
+      {props.activeTagId && (
+        <DragOverlay>
+          <TagItem tag={props.tags.find((t) => t.id === props.activeTagId)!} />
+        </DragOverlay>
+      )}
+    </>
   )
 }

@@ -10,6 +10,7 @@ export const getEvents = async (dateRange: DateRange) => {
     const start = `${event.date}T${event.startTime}`
     const end = `${event.date}T${event.endTime}`
     return {
+      id: event.id,
       title: event.name,
       start,
       end
