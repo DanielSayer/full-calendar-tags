@@ -1,11 +1,11 @@
 import { format } from 'date-fns'
-import type { Event } from '@/actions/events'
 import { Badge } from './ui/badge'
 import { getVisibleColour } from '@/lib/colourUtils'
 import { Icons } from './icons'
+import { CalendarEventItem } from '@/hooks/useGetCalendarEvents'
 
 type EventContentProps = {
-  event: Event
+  event: CalendarEventItem
   handleRemoveTag: (req: { eventId: string; tagId: string }) => void
 }
 
@@ -16,12 +16,12 @@ const EventContent = ({ event, handleRemoveTag }: EventContentProps) => {
   }
   return (
     <div className="h-full w-full">
-      <p className="text-sm font-medium">{event.name}</p>
+      <p className="text-sm font-medium">{event.title}</p>
       <p className="mb-1 text-xs">
         {formatDate(event.start)} - {formatDate(event.end)}
       </p>
       <div className="flex flex-wrap gap-2">
-        {event.tags.map((tag) => (
+        {event.extendedProps.tags.map((tag) => (
           <Badge
             key={tag.id}
             style={{

@@ -1,40 +1,65 @@
 import { Calendar } from '@/components/ui/calendar'
 import { DndContext } from '@dnd-kit/core'
-import { useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
-import { getEvents } from './actions/events'
+import { EventChangeArg } from '@fullcalendar/core/index.js'
+import { useMutation } from '@tanstack/react-query'
+import { format } from 'date-fns'
+import { toast } from 'sonner'
+import { updateEvent } from './actions/events'
 import CalendarEvent from './components/calendar-event'
 import CreateEventButton from './components/create-event-button'
 import { EventCalendar } from './components/event-calendar'
 import { TagsSection } from './components/tags-section'
 import useCalendar from './hooks/useCalendar'
 import useDragAndDropTags from './hooks/useDragAndDropTags'
+import useGetCalendarEvents from './hooks/useGetCalendarEvents'
 
 function App() {
   const { selectedDate, datesSet, handleSelectDate, calendarRef, dateRange } =
     useCalendar()
-
-  const { data, refetch } = useQuery({
-    queryKey: ['events', dateRange],
-    queryFn: () => getEvents(dateRange),
-    enabled: !!dateRange.start && !!dateRange.end
+  const { events, refetch, handleChangeLocalEvents } = useGetCalendarEvents({
+    dateRange
   })
-
-  const { activeTagId, onDragStart, onDragEnd, removeTagAsync } =
+  const { activeTagId, onDragStart, onDragEnd, removeTagAsync, addTagAsync } =
     useDragAndDropTags({ refetch })
 
-  const calendarEvents = useMemo(() => {
-    if (!data) return []
-    return data.map((event) => ({
-      id: event.id,
-      title: event.name,
-      start: event.start,
-      end: event.end,
-      extendedProps: {
-        tags: event.tags
+  const { isError, mutate } = useMutation({
+    mutationFn: updateEvent
+  })
+
+  const handleEventChange = (event: EventChangeArg) => {
+    const end = event.event.end
+    const start = event.event.start
+    if (!start || !end) {
+      return
+    }
+
+    const originalEventsList = events
+    const eventToChange = events?.find((c) => c.id === event.event.id)
+    if (!eventToChange) {
+      return
+    }
+    const updatedEvent = {
+      ...eventToChange,
+      name: event.event.title,
+      start: format(start, "yyyy-MM-dd'T'HH:mm"),
+      end: format(end, "yyyy-MM-dd'T'HH:mm")
+    }
+    const updatedEvents = events.map((e) => {
+      if (e.id === eventToChange.id) {
+        return updatedEvent
       }
-    }))
-  }, [data])
+      return e
+    })
+
+    handleChangeLocalEvents(updatedEvents)
+    mutate(updatedEvent)
+
+    if (isError) {
+      toast.error('Error updating event')
+      event.revert()
+      handleChangeLocalEvents(originalEventsList)
+    }
+  }
 
   return (
     <div className="flex gap-8 p-4">
@@ -58,14 +83,16 @@ function App() {
             calendarRef={calendarRef}
             datesSet={datesSet}
             initialDate={selectedDate}
-            events={calendarEvents}
+            events={events}
+            eventChange={handleEventChange}
             eventContent={(e) => {
-              const event = data?.find((c) => c.id === e.event.id)
+              const event = events?.find((c) => c.id === e.event.id)
               return (
                 <CalendarEvent
                   event={event}
                   handleRemoveTag={removeTagAsync}
                   refetch={refetch}
+                  addTagAsync={addTagAsync}
                 />
               )
             }}

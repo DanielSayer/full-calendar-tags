@@ -40,7 +40,7 @@ const useDragAndDropTags = (props: { refetch: () => void }) => {
     addTagAsync({ eventId: over.id.toString(), tagId: active.id.toString() })
   }
 
-  return { activeTagId, onDragStart, onDragEnd, removeTagAsync }
+  return { activeTagId, onDragStart, onDragEnd, addTagAsync, removeTagAsync }
 }
 
 export default useDragAndDropTags

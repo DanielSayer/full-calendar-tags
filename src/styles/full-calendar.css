@@ -112,6 +112,11 @@
   left: 0px;
 }
 
+.fc .fc-highlight {
+  background-color: hsl(var(--primary));
+  opacity: 0.15;
+}
+
 /* Event Overrides */
 .fc-timegrid-event .fc-event-time {
   font-weight: 700;

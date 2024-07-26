@@ -36,6 +36,7 @@ export const EventCalendar = ({ calendarRef, ...props }: CalendarProps) => {
         }
       }}
       nowIndicator
+      editable
     />
   )
 }

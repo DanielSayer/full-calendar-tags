@@ -81,3 +81,21 @@ export const deleteEvent = async (req: { id: string }) => {
   const updatedEvents = events.filter((e) => e.id !== req.id)
   localStorage.setItem('events', JSON.stringify(updatedEvents))
 }
+
+export const updateEvent = async (req: {
+  id: string
+  name: string
+  start: string
+  end: string
+}) => {
+  const events = JSON.parse(localStorage.getItem('events') || '[]') as Event[]
+  const event = events.find((e) => e.id === req.id)
+  if (!event) {
+    throw Error('Event not found')
+  }
+  event.name = req.name
+  event.start = req.start
+  event.end = req.end
+
+  localStorage.setItem('events', JSON.stringify(events))
+}
