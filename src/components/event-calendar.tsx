@@ -37,6 +37,8 @@ export const EventCalendar = ({ calendarRef, ...props }: CalendarProps) => {
       }}
       nowIndicator
       editable
+      selectable
+      selectAllow={(span) => span.start.getDate() === span.end.getDate()}
     />
   )
 }

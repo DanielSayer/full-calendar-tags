@@ -22,18 +22,21 @@ import {
   FormMessage
 } from './ui/form'
 import { Input } from './ui/input'
+import { CreateEventDates } from '@/App'
 
 export type EventRequest = z.infer<typeof createEventSchema>
 
 const CreateEventDialog = (props: {
+  data: CreateEventDates | undefined
   toggle: () => void
   refetch: () => void
 }) => {
   const form = useForm<EventRequest>({
     defaultValues: {
       name: '',
-      startTime: '',
-      endTime: ''
+      date: props.data?.date,
+      startTime: props.data?.start ?? '',
+      endTime: props.data?.end ?? ''
     },
     resolver: zodResolver(createEventSchema)
   })

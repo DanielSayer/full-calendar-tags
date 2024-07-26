@@ -1,10 +1,8 @@
 import { Calendar } from '@/components/ui/calendar'
 import { DndContext } from '@dnd-kit/core'
-import { EventChangeArg } from '@fullcalendar/core/index.js'
-import { useMutation } from '@tanstack/react-query'
+import { DateSelectArg } from '@fullcalendar/core/index.js'
 import { format } from 'date-fns'
-import { toast } from 'sonner'
-import { updateEvent } from './actions/events'
+import { useState } from 'react'
 import CalendarEvent from './components/calendar-event'
 import CreateEventButton from './components/create-event-button'
 import { EventCalendar } from './components/event-calendar'
@@ -13,52 +11,33 @@ import useCalendar from './hooks/useCalendar'
 import useDragAndDropTags from './hooks/useDragAndDropTags'
 import useGetCalendarEvents from './hooks/useGetCalendarEvents'
 
+export type CreateEventDates = {
+  date: string
+  start: string
+  end: string
+}
+
 function App() {
-  const { selectedDate, datesSet, handleSelectDate, calendarRef, dateRange } =
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const toggle = () => setIsOpen(!isOpen)
+  const [createEventDates, setCreateEventsDates] = useState<
+    CreateEventDates | undefined
+  >(undefined)
+
+  const { selectedDate, calendarRef, dateRange, datesSet, handleSelectDate } =
     useCalendar()
-  const { events, refetch, handleChangeLocalEvents } = useGetCalendarEvents({
+  const { events, refetch, handleEventChange } = useGetCalendarEvents({
     dateRange
   })
   const { activeTagId, onDragStart, onDragEnd, removeTagAsync, addTagAsync } =
     useDragAndDropTags({ refetch })
 
-  const { isError, mutate } = useMutation({
-    mutationFn: updateEvent
-  })
-
-  const handleEventChange = (event: EventChangeArg) => {
-    const end = event.event.end
-    const start = event.event.start
-    if (!start || !end) {
-      return
-    }
-
-    const originalEventsList = events
-    const eventToChange = events?.find((c) => c.id === event.event.id)
-    if (!eventToChange) {
-      return
-    }
-    const updatedEvent = {
-      ...eventToChange,
-      name: event.event.title,
-      start: format(start, "yyyy-MM-dd'T'HH:mm"),
-      end: format(end, "yyyy-MM-dd'T'HH:mm")
-    }
-    const updatedEvents = events.map((e) => {
-      if (e.id === eventToChange.id) {
-        return updatedEvent
-      }
-      return e
-    })
-
-    handleChangeLocalEvents(updatedEvents)
-    mutate(updatedEvent)
-
-    if (isError) {
-      toast.error('Error updating event')
-      event.revert()
-      handleChangeLocalEvents(originalEventsList)
-    }
+  const handleSelect = (args: DateSelectArg) => {
+    const start = format(args.start, 'HH:mm')
+    const end = format(args.end, 'HH:mm')
+    const date = format(args.start, 'yyyy-MM-dd')
+    setCreateEventsDates({ date, start, end })
+    toggle()
   }
 
   return (
@@ -67,7 +46,12 @@ function App() {
         <div className="hidden lg:block">
           <div className="flex items-center justify-between">
             <h1 className="text-lg font-semibold">Calendar</h1>
-            <CreateEventButton refetch={refetch} />
+            <CreateEventButton
+              refetch={refetch}
+              isOpen={isOpen}
+              toggle={toggle}
+              createEventDates={createEventDates}
+            />
           </div>
           <Calendar
             mode="single"
@@ -78,7 +62,13 @@ function App() {
           <TagsSection activeTagId={activeTagId} />
         </div>
         <div className="w-full">
-          <CreateEventButton className="lg:hidden" refetch={refetch} />
+          <CreateEventButton
+            className="lg:hidden"
+            refetch={refetch}
+            isOpen={isOpen}
+            toggle={toggle}
+            createEventDates={createEventDates}
+          />
           <EventCalendar
             calendarRef={calendarRef}
             datesSet={datesSet}
@@ -96,6 +86,7 @@ function App() {
                 />
               )
             }}
+            select={handleSelect}
           />
         </div>
       </DndContext>

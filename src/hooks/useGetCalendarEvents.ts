@@ -1,8 +1,11 @@
 import { DateRange } from '@/types/misc'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
-import { getEvents } from '../actions/events'
+import { getEvents, updateEvent } from '../actions/events'
 import { Tag } from '../components/tags-sheet'
+import { EventChangeArg } from '@fullcalendar/core/index.js'
+import { format } from 'date-fns'
+import { toast } from 'sonner'
 
 export type CalendarEventItem = {
   id: string
@@ -44,10 +47,49 @@ const useGetCalendarEvents = ({ dateRange }: { dateRange: DateRange }) => {
     setLocalEvents(events)
   }, [data])
 
+  const { isError, mutate } = useMutation({
+    mutationFn: updateEvent
+  })
+
+  const handleEventChange = (event: EventChangeArg) => {
+    const end = event.event.end
+    const start = event.event.start
+    if (!start || !end) {
+      return
+    }
+
+    const originalEventsList = localEvents
+    const eventToChange = localEvents?.find((c) => c.id === event.event.id)
+    if (!eventToChange) {
+      return
+    }
+    const updatedEvent = {
+      ...eventToChange,
+      name: event.event.title,
+      start: format(start, "yyyy-MM-dd'T'HH:mm"),
+      end: format(end, "yyyy-MM-dd'T'HH:mm")
+    }
+    const updatedEvents = localEvents.map((e) => {
+      if (e.id === eventToChange.id) {
+        return updatedEvent
+      }
+      return e
+    })
+
+    handleChangeLocalEvents(updatedEvents)
+    mutate(updatedEvent)
+
+    if (isError) {
+      toast.error('Error updating event')
+      event.revert()
+      handleChangeLocalEvents(originalEventsList)
+    }
+  }
+
   return {
     events: localEvents,
     refetch,
-    handleChangeLocalEvents
+    handleEventChange
   }
 }
 

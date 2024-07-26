@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { CreateEventDates } from '@/App'
 import CreateEventDialog from './create-event-dialog'
 import { Icons } from './icons'
 import { Button } from './ui/button'
@@ -11,13 +11,14 @@ import {
 
 const CreateEventButton = (props: {
   className?: string
+  isOpen: boolean
+  createEventDates: CreateEventDates | undefined
+  toggle: () => void
   refetch: () => void
 }) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false)
-  const toggle = () => setIsOpen(!isOpen)
   return (
-    <Dialog open={isOpen} onOpenChange={toggle}>
-      <DialogTrigger asChild onClick={toggle}>
+    <Dialog open={props.isOpen} onOpenChange={props.toggle}>
+      <DialogTrigger asChild onClick={props.toggle}>
         <div className={props.className}>
           <Button
             className="absolute bottom-10 right-10 z-50 aspect-square h-14 w-14 rounded-full shadow-lg md:bottom-14 md:right-14 lg:hidden"
@@ -31,7 +32,11 @@ const CreateEventButton = (props: {
         </div>
       </DialogTrigger>
       <DialogContent>
-        <CreateEventDialog toggle={toggle} refetch={props.refetch} />
+        <CreateEventDialog
+          toggle={props.toggle}
+          refetch={props.refetch}
+          data={props.createEventDates}
+        />
         <DialogDescription className="sr-only">
           Create a new event
         </DialogDescription>
