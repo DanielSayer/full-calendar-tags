@@ -70,15 +70,15 @@ const Tags = (props: {
     <>
       <div className="flex flex-col px-2">
         {props.tags.map((tag) => (
-          <div className="flex">
-            <Draggable key={tag.name} id={tag.id}>
+          <div className="flex" key={tag.id}>
+            <Draggable id={tag.id}>
               <TagItem tag={tag} />
             </Draggable>
           </div>
         ))}
       </div>
       {props.activeTagId && (
-        <DragOverlay>
+        <DragOverlay dropAnimation={null}>
           <TagItem tag={props.tags.find((t) => t.id === props.activeTagId)!} />
         </DragOverlay>
       )}

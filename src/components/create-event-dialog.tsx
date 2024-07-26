@@ -22,8 +22,9 @@ import { createEventSchema } from '@/lib/validations/events'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { createEvent } from '@/actions/events'
+import { Tag } from './tags-sheet'
 
-export type Event = EventRequest & { id: string }
+export type Event = EventRequest & { id: string; tags: Tag[] }
 export type EventRequest = z.infer<typeof createEventSchema>
 
 const CreateEventDialog = (props: {

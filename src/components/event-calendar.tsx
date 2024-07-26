@@ -8,7 +8,6 @@ import interactionPlugin from '@fullcalendar/interaction'
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import type { MutableRefObject } from 'react'
-import Event from './event'
 
 export type CalendarProps = Omit<CalendarOptions, 'plugins'> & {
   calendarRef: MutableRefObject<FullCalendar | null>
@@ -36,7 +35,6 @@ export const EventCalendar = ({ calendarRef, ...props }: CalendarProps) => {
         }
       }}
       nowIndicator
-      eventContent={(e) => <Event id={e.event.id} />}
     />
   )
 }

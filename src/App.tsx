@@ -1,12 +1,13 @@
 import { Calendar } from '@/components/ui/calendar'
-import { DndContext } from '@dnd-kit/core'
+import { DndContext, DragEndEvent } from '@dnd-kit/core'
 import { useQuery } from '@tanstack/react-query'
-import { getEvents } from './actions/events'
+import { useMemo, useState } from 'react'
+import { addTagToEvent, getEvents } from './actions/events'
 import CreateEventButton from './components/create-event-button'
+import Event from './components/event'
 import { EventCalendar } from './components/event-calendar'
 import { TagsSection } from './components/tags-section'
 import useCalendar from './hooks/useCalendar'
-import { useState } from 'react'
 
 function App() {
   const [activeTagId, setActiveTagId] = useState<string | null>(null)
@@ -19,10 +20,30 @@ function App() {
     enabled: !!dateRange.start && !!dateRange.end
   })
 
+  const onDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    if (!active || !over) return
+
+    addTagToEvent(over.id.toString(), active.id.toString())
+  }
+
+  const calendarEvents = useMemo(() => {
+    if (!data) return []
+    return data.map((event) => ({
+      id: event.id,
+      title: event.title,
+      start: event.start,
+      end: event.end,
+      extendedProps: {
+        tags: event.tags
+      }
+    }))
+  }, [data])
+
   return (
     <div className="flex gap-8 p-4">
       <DndContext
-        onDragEnd={() => console.log('drag end')}
+        onDragEnd={onDragEnd}
         onDragStart={(e) => setActiveTagId(e.active.id.toString())}
       >
         <div className="hidden lg:block">
@@ -44,7 +65,10 @@ function App() {
             calendarRef={calendarRef}
             datesSet={datesSet}
             initialDate={selectedDate}
-            events={data}
+            events={calendarEvents}
+            eventContent={(e) => (
+              <Event id={e.event.id} tags={e.event.extendedProps.tags} />
+            )}
           />
         </div>
       </DndContext>
