@@ -1,12 +1,16 @@
 import type { Tag } from './tags-sheet'
 import { Skeleton } from './ui/skeleton'
+import { getVisibleColour } from '@/lib/colourUtils'
 
 export const TagItem = (props: { tag: Tag }) => {
   return (
     <div className="flex items-center gap-2">
       <span
-        className="inline-block h-3 w-3 rounded-full border border-black"
-        style={{ backgroundColor: props.tag.colour }}
+        className="inline-block h-3 w-3 rounded-full border"
+        style={{
+          backgroundColor: props.tag.colour,
+          borderColor: getVisibleColour(props.tag.colour)
+        }}
       />
       <div>{props.tag.name}</div>
     </div>

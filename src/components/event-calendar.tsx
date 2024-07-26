@@ -23,6 +23,7 @@ export const EventCalendar = ({ calendarRef, ...props }: CalendarProps) => {
       locale="en-au"
       plugins={[timeGridPlugin, dayGridPlugin, interactionPlugin]}
       {...viewDeterministicProps}
+      eventClassNames="border-none bg-transparent shadow-none"
       allDaySlot={false}
       handleWindowResize
       height={height - 32}

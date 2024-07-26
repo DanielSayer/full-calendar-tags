@@ -1,16 +1,16 @@
 import { Calendar } from '@/components/ui/calendar'
-import { DndContext, DragEndEvent } from '@dnd-kit/core'
+import { DndContext } from '@dnd-kit/core'
 import { useQuery } from '@tanstack/react-query'
-import { useMemo, useState } from 'react'
-import { addTagToEvent, getEvents } from './actions/events'
+import { useMemo } from 'react'
+import { getEvents } from './actions/events'
 import CreateEventButton from './components/create-event-button'
 import Event from './components/event'
 import { EventCalendar } from './components/event-calendar'
 import { TagsSection } from './components/tags-section'
 import useCalendar from './hooks/useCalendar'
+import useDragAndDropTags from './hooks/useDragAndDropTags'
 
 function App() {
-  const [activeTagId, setActiveTagId] = useState<string | null>(null)
   const { selectedDate, datesSet, handleSelectDate, calendarRef, dateRange } =
     useCalendar()
 
@@ -20,12 +20,8 @@ function App() {
     enabled: !!dateRange.start && !!dateRange.end
   })
 
-  const onDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event
-    if (!active || !over) return
-
-    addTagToEvent(over.id.toString(), active.id.toString())
-  }
+  const { activeTagId, onDragStart, onDragEnd, removeTagAsync } =
+    useDragAndDropTags({ refetch })
 
   const calendarEvents = useMemo(() => {
     if (!data) return []
@@ -42,10 +38,7 @@ function App() {
 
   return (
     <div className="flex gap-8 p-4">
-      <DndContext
-        onDragEnd={onDragEnd}
-        onDragStart={(e) => setActiveTagId(e.active.id.toString())}
-      >
+      <DndContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
         <div className="hidden lg:block">
           <div className="flex items-center justify-between">
             <h1 className="text-lg font-semibold">Calendar</h1>
@@ -68,7 +61,7 @@ function App() {
             events={calendarEvents}
             eventContent={(e) => {
               const event = data?.find((c) => c.id === e.event.id)
-              return <Event event={event} />
+              return <Event event={event} handleRemoveTag={removeTagAsync} />
             }}
           />
         </div>

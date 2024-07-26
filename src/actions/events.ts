@@ -37,18 +37,21 @@ export const createEvent = async (event: EventRequest) => {
   localStorage.setItem('events', JSON.stringify([...events, newEvent]))
 }
 
-export const addTagToEvent = async (eventId: string, tagId: string) => {
+export const addTagToEvent = async (request: {
+  eventId: string
+  tagId: string
+}) => {
   await delay(250)
   const events = JSON.parse(localStorage.getItem('events') || '[]') as Event[]
-  const event = events.find((e) => e.id === eventId)
+  const event = events.find((e) => e.id === request.eventId)
   if (!event) {
     throw Error('Event not found')
   }
-  if (event.tags.map((t) => t.id).includes(tagId)) {
+  if (event.tags.map((t) => t.id).includes(request.tagId)) {
     throw Error('Tag already added to event')
   }
   const tags = await getTags()
-  const tag = tags.find((t) => t.id === tagId)
+  const tag = tags.find((t) => t.id === request.tagId)
   if (!tag) {
     throw Error('Tag not found')
   }
@@ -56,15 +59,18 @@ export const addTagToEvent = async (eventId: string, tagId: string) => {
   localStorage.setItem('events', JSON.stringify(events))
 }
 
-export const removeTagFromEvent = async (eventId: string, tagId: string) => {
+export const removeTagFromEvent = async (req: {
+  eventId: string
+  tagId: string
+}) => {
   await delay(250)
   const events = JSON.parse(localStorage.getItem('events') || '[]') as Event[]
-  const event = events.find((e) => e.id === eventId)
+  const event = events.find((e) => e.id === req.eventId)
   if (!event) {
     throw Error('Event not found')
   }
 
-  const updatedTags = event.tags.filter((t) => t.id !== tagId)
+  const updatedTags = event.tags.filter((t) => t.id !== req.tagId)
   event.tags = updatedTags
   localStorage.setItem('events', JSON.stringify(events))
 }

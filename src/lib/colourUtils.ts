@@ -1,4 +1,4 @@
-export const getTextColour = (colour: string) => {
+export const getVisibleColour = (colour: string) => {
   const r = parseInt(colour.slice(1, 3), 16)
   const g = parseInt(colour.slice(3, 5), 16)
   const b = parseInt(colour.slice(5, 7), 16)

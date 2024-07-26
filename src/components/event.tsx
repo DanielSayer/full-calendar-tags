@@ -1,37 +1,47 @@
-import { removeTagFromEvent } from '@/actions/events'
-import { getTextColour } from '@/lib/colourUtils'
+import type { Event } from '@/actions/events'
+import { getVisibleColour } from '@/lib/colourUtils'
 import { cn } from '@/lib/utils'
 import { useDroppable } from '@dnd-kit/core'
+import { format } from 'date-fns'
 import { Icons } from './icons'
 import { Badge } from './ui/badge'
-import type { Event } from '@/actions/events'
 
 type EventProps = {
   event: Event | undefined
+  handleRemoveTag: (req: { eventId: string; tagId: string }) => void
 }
 
-const Event = ({ event }: EventProps) => {
+const Event = ({ event, handleRemoveTag }: EventProps) => {
   if (!event) {
     throw new Error('Event is undefined')
   }
   const { isOver, setNodeRef } = useDroppable({ id: event.id })
 
+  const formatDate = (date: string) => {
+    const dateObj = new Date(date)
+    return format(dateObj, 'hh:mm a')
+  }
+
   return (
     <div
       ref={setNodeRef}
       className={cn(
-        'h-full w-full overflow-hidden px-2 py-1',
-        isOver && 'border border-red-500 text-red-500'
+        'h-full w-full overflow-hidden rounded-sm border-primary bg-primary p-1 opacity-90',
+        isOver && '-rotate-2'
       )}
     >
-      <div>This is an event</div>
+      <p className="text-sm font-medium">{event.name}</p>
+      <p className="mb-1 text-xs">
+        {formatDate(event.start)} - {formatDate(event.end)}
+      </p>
       <div className="flex flex-wrap gap-2">
         {event.tags.map((tag) => (
           <Badge
             key={tag.id}
             style={{
               backgroundColor: tag.colour,
-              color: getTextColour(tag.colour)
+              color: getVisibleColour(tag.colour),
+              borderColor: getVisibleColour(tag.colour)
             }}
           >
             <div className="flex flex-wrap gap-1">
@@ -40,7 +50,9 @@ const Event = ({ event }: EventProps) => {
                 <Icons.close
                   className="h-4 w-4 hover:cursor-pointer hover:text-red-500"
                   role="button"
-                  onClick={() => removeTagFromEvent(event.id, tag.id)}
+                  onClick={() =>
+                    handleRemoveTag({ eventId: event.id, tagId: tag.id })
+                  }
                 />
               </span>
             </div>
