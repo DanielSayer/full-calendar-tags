@@ -74,3 +74,10 @@ export const removeTagFromEvent = async (req: {
   event.tags = updatedTags
   localStorage.setItem('events', JSON.stringify(events))
 }
+
+export const deleteEvent = async (req: { id: string }) => {
+  await delay(250)
+  const events = JSON.parse(localStorage.getItem('events') || '[]') as Event[]
+  const updatedEvents = events.filter((e) => e.id !== req.id)
+  localStorage.setItem('events', JSON.stringify(updatedEvents))
+}

@@ -1,35 +1,21 @@
-import type { Event } from '@/actions/events'
-import { getVisibleColour } from '@/lib/colourUtils'
-import { cn } from '@/lib/utils'
-import { useDroppable } from '@dnd-kit/core'
 import { format } from 'date-fns'
-import { Icons } from './icons'
+import type { Event } from '@/actions/events'
 import { Badge } from './ui/badge'
+import { getVisibleColour } from '@/lib/colourUtils'
+import { Icons } from './icons'
 
-type EventProps = {
-  event: Event | undefined
+type EventContentProps = {
+  event: Event
   handleRemoveTag: (req: { eventId: string; tagId: string }) => void
 }
 
-const Event = ({ event, handleRemoveTag }: EventProps) => {
-  if (!event) {
-    throw new Error('Event is undefined')
-  }
-  const { isOver, setNodeRef } = useDroppable({ id: event.id })
-
+const EventContent = ({ event, handleRemoveTag }: EventContentProps) => {
   const formatDate = (date: string) => {
     const dateObj = new Date(date)
     return format(dateObj, 'hh:mm a')
   }
-
   return (
-    <div
-      ref={setNodeRef}
-      className={cn(
-        'h-full w-full overflow-hidden rounded-sm border-primary bg-primary p-1 opacity-90',
-        isOver && '-rotate-2'
-      )}
-    >
+    <div className="h-full w-full">
       <p className="text-sm font-medium">{event.name}</p>
       <p className="mb-1 text-xs">
         {formatDate(event.start)} - {formatDate(event.end)}
@@ -63,4 +49,4 @@ const Event = ({ event, handleRemoveTag }: EventProps) => {
   )
 }
 
-export default Event
+export default EventContent

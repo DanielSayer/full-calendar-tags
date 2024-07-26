@@ -1,8 +1,9 @@
-import { CircleX, Ghost, Loader2, Plus } from 'lucide-react'
+import { CircleX, Ghost, Loader2, Plus, Trash } from 'lucide-react'
 
 export const Icons = {
   add: Plus,
   empty: Ghost,
+  close: CircleX,
   spinner: Loader2,
-  close: CircleX
+  trash: Trash
 }

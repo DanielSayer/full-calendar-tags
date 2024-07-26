@@ -3,8 +3,8 @@ import { DndContext } from '@dnd-kit/core'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { getEvents } from './actions/events'
+import CalendarEvent from './components/calendar-event'
 import CreateEventButton from './components/create-event-button'
-import Event from './components/event'
 import { EventCalendar } from './components/event-calendar'
 import { TagsSection } from './components/tags-section'
 import useCalendar from './hooks/useCalendar'
@@ -61,7 +61,13 @@ function App() {
             events={calendarEvents}
             eventContent={(e) => {
               const event = data?.find((c) => c.id === e.event.id)
-              return <Event event={event} handleRemoveTag={removeTagAsync} />
+              return (
+                <CalendarEvent
+                  event={event}
+                  handleRemoveTag={removeTagAsync}
+                  refetch={refetch}
+                />
+              )
             }}
           />
         </div>
