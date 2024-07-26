@@ -1,3 +1,11 @@
+import { createEvent } from '@/actions/events'
+import { createEventSchema } from '@/lib/validations/events'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { DatePicker } from './date-picker'
+import LoadingButton from './loading-button'
 import { Button } from './ui/button'
 import {
   DialogClose,
@@ -13,18 +21,8 @@ import {
   FormLabel,
   FormMessage
 } from './ui/form'
-import { useForm } from 'react-hook-form'
 import { Input } from './ui/input'
-import LoadingButton from './loading-button'
-import { DatePicker } from './date-picker'
-import { z } from 'zod'
-import { createEventSchema } from '@/lib/validations/events'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
-import { createEvent } from '@/actions/events'
-import { Tag } from './tags-sheet'
 
-export type Event = EventRequest & { id: string; tags: Tag[] }
 export type EventRequest = z.infer<typeof createEventSchema>
 
 const CreateEventDialog = (props: {

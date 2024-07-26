@@ -5,7 +5,7 @@ export const TagItem = (props: { tag: Tag }) => {
   return (
     <div className="flex items-center gap-2">
       <span
-        className="inline-block h-2 w-2 rounded-full"
+        className="inline-block h-3 w-3 rounded-full border border-black"
         style={{ backgroundColor: props.tag.colour }}
       />
       <div>{props.tag.name}</div>

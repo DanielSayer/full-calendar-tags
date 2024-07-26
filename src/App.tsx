@@ -31,7 +31,7 @@ function App() {
     if (!data) return []
     return data.map((event) => ({
       id: event.id,
-      title: event.title,
+      title: event.name,
       start: event.start,
       end: event.end,
       extendedProps: {
@@ -66,9 +66,10 @@ function App() {
             datesSet={datesSet}
             initialDate={selectedDate}
             events={calendarEvents}
-            eventContent={(e) => (
-              <Event id={e.event.id} tags={e.event.extendedProps.tags} />
-            )}
+            eventContent={(e) => {
+              const event = data?.find((c) => c.id === e.event.id)
+              return <Event event={event} />
+            }}
           />
         </div>
       </DndContext>

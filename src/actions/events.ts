@@ -1,25 +1,22 @@
-import type { Event, EventRequest } from '@/components/create-event-dialog'
+import type { EventRequest } from '@/components/create-event-dialog'
 import { delay } from '@/lib/utils'
 import { DateRange } from '@/types/misc'
 import { getTags } from './tags'
+import { Tag } from '@/components/tags-sheet'
+
+export type Event = {
+  id: string
+  name: string
+  start: string
+  end: string
+  tags: Tag[]
+}
 
 export const getEvents = async (dateRange: DateRange) => {
   await delay(250)
   const events = JSON.parse(localStorage.getItem('events') || '[]') as Event[]
 
-  const mappedEvents = events.map((event) => {
-    const start = `${event.date}T${event.startTime}`
-    const end = `${event.date}T${event.endTime}`
-    return {
-      id: event.id,
-      title: event.name,
-      start,
-      end,
-      tags: event.tags
-    }
-  })
-
-  return mappedEvents.filter((event) => {
+  return events.filter((event) => {
     return (
       dateRange.start <= new Date(event.start) &&
       dateRange.end >= new Date(event.end)
@@ -32,8 +29,10 @@ export const createEvent = async (event: EventRequest) => {
   const events = JSON.parse(localStorage.getItem('events') || '[]') as Event[]
   const newEvent: Event = {
     id: crypto.randomUUID(),
-    tags: [],
-    ...event
+    name: event.name,
+    start: `${event.date}T${event.startTime}`,
+    end: `${event.date}T${event.endTime}`,
+    tags: []
   }
   localStorage.setItem('events', JSON.stringify([...events, newEvent]))
 }
