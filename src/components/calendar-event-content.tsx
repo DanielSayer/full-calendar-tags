@@ -31,7 +31,7 @@ const EventContent = ({ event, handleRemoveTag }: EventContentProps) => {
             }}
           >
             <div className="flex flex-wrap gap-1">
-              <span className="truncate">{tag.name}</span>
+              <span className="max-w-36 truncate">{tag.name}</span>
               <span aria-label="remove tag">
                 <Icons.close
                   className="h-4 w-4 hover:cursor-pointer hover:text-red-500"

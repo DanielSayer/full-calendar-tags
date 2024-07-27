@@ -12,7 +12,7 @@ export const TagItem = (props: { tag: Tag }) => {
           borderColor: getVisibleColour(props.tag.colour)
         }}
       />
-      <div>{props.tag.name}</div>
+      <div className="max-w-52 truncate">{props.tag.name}</div>
     </div>
   )
 }

@@ -1,12 +1,15 @@
-import { EditEventDates } from '@/hooks/useCreateEventDialog'
 import { CalendarEventItem } from '@/hooks/useCalendarEvents'
+import { EditEventDates } from '@/hooks/useCreateEventDialog'
+import { useHover } from '@/hooks/useHover'
+import { generateCalendarId } from '@/lib/calendarUtils'
 import { cn } from '@/lib/utils'
 import { useDroppable } from '@dnd-kit/core'
+import { useEffect, useRef, useState } from 'react'
 import EventContent from './calendar-event-content'
 import { CalendarEventMenu } from './calendar-event-menu'
+import CalendarEventPopover from './calendar-event-popover'
 import { ContextMenu, ContextMenuTrigger } from './ui/context-menu'
-import { useEffect, useState } from 'react'
-import { generateCalendarId } from '@/lib/calendarUtils'
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 
 type EventProps = {
   event: CalendarEventItem | undefined
@@ -25,6 +28,8 @@ const CalendarEvent = ({
   removeTagAsync,
   handleClickEdit
 }: EventProps) => {
+  const eventRef = useRef<HTMLDivElement>(null)
+  const isHovering = useHover(eventRef, { debounce: 250 })
   const [cacheBreaker, setCacheBreaker] = useState<number>(0)
   if (!event) {
     throw new Error('Event is undefined')
@@ -48,18 +53,27 @@ const CalendarEvent = ({
         isOver && '-rotate-2'
       )}
     >
-      <ContextMenu>
-        <ContextMenuTrigger>
-          <EventContent event={event} handleRemoveTag={handleRemoveTag} />
-          <CalendarEventMenu
-            event={event}
-            refetch={refetch}
-            addTagAsync={addTagAsync}
-            removeTagAsync={removeTagAsync}
-            handleClickEdit={handleClickEdit}
-          />
-        </ContextMenuTrigger>
-      </ContextMenu>
+      <Popover open={isHovering}>
+        <PopoverTrigger asChild>
+          <div className="h-full w-full" ref={eventRef}>
+            <ContextMenu>
+              <ContextMenuTrigger>
+                <EventContent event={event} handleRemoveTag={handleRemoveTag} />
+              </ContextMenuTrigger>
+              <CalendarEventMenu
+                event={event}
+                refetch={refetch}
+                addTagAsync={addTagAsync}
+                removeTagAsync={removeTagAsync}
+                handleClickEdit={handleClickEdit}
+              />
+            </ContextMenu>
+          </div>
+        </PopoverTrigger>
+        <PopoverContent side="right" sideOffset={10} className="w-fit">
+          <CalendarEventPopover tags={event.extendedProps.tags} />
+        </PopoverContent>
+      </Popover>
     </div>
   )
 }

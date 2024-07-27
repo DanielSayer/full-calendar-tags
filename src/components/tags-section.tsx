@@ -64,7 +64,7 @@ const Tags = (props: {
 
   return (
     <>
-      <div className="flex max-h-52 flex-col overflow-y-auto px-2">
+      <div className="flex max-h-52 flex-col overflow-y-auto px-2 py-2">
         {props.tags.map((tag) => (
           <div className="flex" key={tag.id}>
             <Draggable id={tag.id}>
