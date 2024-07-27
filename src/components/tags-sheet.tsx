@@ -82,7 +82,11 @@ export function CreateTagForm() {
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="My new tag" />
+                      <Input
+                        {...field}
+                        placeholder="My new tag"
+                        autoComplete="off"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

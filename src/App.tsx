@@ -7,7 +7,7 @@ import { TagsSection } from './components/tags-section'
 import useCalendar from './hooks/useCalendar'
 import useCreateEventDialog from './hooks/useCreateEventDialog'
 import useDragAndDropTags from './hooks/useDragAndDropTags'
-import useGetCalendarEvents from './hooks/useGetCalendarEvents'
+import useCalendarEvents from './hooks/useCalendarEvents'
 
 function App() {
   const {
@@ -22,7 +22,7 @@ function App() {
   const { selectedDate, calendarRef, dateRange, datesSet, handleSelectDate } =
     useCalendar()
 
-  const { events, refetch, handleEventChange } = useGetCalendarEvents({
+  const { events, refetch, handleEventChange } = useCalendarEvents({
     dateRange
   })
 
@@ -55,7 +55,8 @@ function App() {
             initialDate={selectedDate}
             events={events}
             datesSet={datesSet}
-            eventChange={handleEventChange}
+            eventDrop={handleEventChange}
+            eventResize={handleEventChange}
             select={handleSelect}
             eventContent={(e) => {
               const event = events?.find((c) => c.id === e.event.id)
@@ -65,6 +66,7 @@ function App() {
                   handleRemoveTag={removeTagAsync}
                   refetch={refetch}
                   addTagAsync={addTagAsync}
+                  removeTagAsync={removeTagAsync}
                   handleClickEdit={handleEdit}
                 />
               )

@@ -1,11 +1,12 @@
 import { DateRange } from '@/types/misc'
+import { EventDropArg } from '@fullcalendar/core/index.js'
+import { EventResizeDoneArg } from '@fullcalendar/interaction/index.js'
 import { useMutation, useQuery } from '@tanstack/react-query'
+import { format } from 'date-fns'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import { getEvents, updateEvent } from '../actions/events'
 import { Tag } from '../components/tags-sheet'
-import { EventChangeArg } from '@fullcalendar/core/index.js'
-import { format } from 'date-fns'
-import { toast } from 'sonner'
 
 export type CalendarEventItem = {
   id: string
@@ -15,7 +16,7 @@ export type CalendarEventItem = {
   extendedProps: { tags: Tag[] }
 }
 
-const useGetCalendarEvents = ({ dateRange }: { dateRange: DateRange }) => {
+const useCalendarEvents = ({ dateRange }: { dateRange: DateRange }) => {
   const [localEvents, setLocalEvents] = useState<CalendarEventItem[]>([])
 
   const { data, refetch } = useQuery({
@@ -47,18 +48,23 @@ const useGetCalendarEvents = ({ dateRange }: { dateRange: DateRange }) => {
     setLocalEvents(events)
   }, [data])
 
-  const { isError, mutate } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: updateEvent
   })
 
-  const handleEventChange = (event: EventChangeArg) => {
+  const handleEventChange = (event: EventResizeDoneArg | EventDropArg) => {
     const end = event.event.end
     const start = event.event.start
     if (!start || !end) {
       return
     }
 
-    const originalEventsList = localEvents
+    if (start.toDateString() !== end.toDateString()) {
+      toast.error('Cannot have events spanning multiple days')
+      event.revert()
+      return
+    }
+
     const eventToChange = localEvents?.find((c) => c.id === event.event.id)
     if (!eventToChange) {
       return
@@ -78,12 +84,6 @@ const useGetCalendarEvents = ({ dateRange }: { dateRange: DateRange }) => {
 
     handleChangeLocalEvents(updatedEvents)
     mutate(updatedEvent)
-
-    if (isError) {
-      toast.error('Error updating event')
-      event.revert()
-      handleChangeLocalEvents(originalEventsList)
-    }
   }
 
   return {
@@ -93,4 +93,4 @@ const useGetCalendarEvents = ({ dateRange }: { dateRange: DateRange }) => {
   }
 }
 
-export default useGetCalendarEvents
+export default useCalendarEvents

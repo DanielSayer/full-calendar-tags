@@ -2,7 +2,7 @@ import { format } from 'date-fns'
 import { Badge } from './ui/badge'
 import { getVisibleColour } from '@/lib/colourUtils'
 import { Icons } from './icons'
-import { CalendarEventItem } from '@/hooks/useGetCalendarEvents'
+import { CalendarEventItem } from '@/hooks/useCalendarEvents'
 
 type EventContentProps = {
   event: CalendarEventItem

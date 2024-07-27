@@ -1,15 +1,18 @@
 import { EditEventDates } from '@/hooks/useCreateEventDialog'
-import { CalendarEventItem } from '@/hooks/useGetCalendarEvents'
+import { CalendarEventItem } from '@/hooks/useCalendarEvents'
 import { cn } from '@/lib/utils'
 import { useDroppable } from '@dnd-kit/core'
 import EventContent from './calendar-event-content'
 import { CalendarEventMenu } from './calendar-event-menu'
 import { ContextMenu, ContextMenuTrigger } from './ui/context-menu'
+import { useEffect, useState } from 'react'
+import { generateCalendarId } from '@/lib/calendarUtils'
 
 type EventProps = {
   event: CalendarEventItem | undefined
   refetch: () => void
   addTagAsync: (req: { eventId: string; tagId: string }) => void
+  removeTagAsync: (req: { eventId: string; tagId: string }) => void
   handleRemoveTag: (req: { eventId: string; tagId: string }) => void
   handleClickEdit: (event: EditEventDates) => void
 }
@@ -19,12 +22,23 @@ const CalendarEvent = ({
   handleRemoveTag,
   refetch,
   addTagAsync,
+  removeTagAsync,
   handleClickEdit
 }: EventProps) => {
+  const [cacheBreaker, setCacheBreaker] = useState<number>(0)
   if (!event) {
     throw new Error('Event is undefined')
   }
-  const { isOver, setNodeRef } = useDroppable({ id: event.id })
+
+  useEffect(() => {
+    const rand = Math.floor(Math.random() * 100)
+    setCacheBreaker(rand + 1)
+  }, [event.start, event.end])
+
+  const { isOver, setNodeRef } = useDroppable({
+    id: generateCalendarId(cacheBreaker, event.id),
+    resizeObserverConfig: { disabled: true, updateMeasurementsFor: [] }
+  })
 
   return (
     <div
@@ -41,6 +55,7 @@ const CalendarEvent = ({
             event={event}
             refetch={refetch}
             addTagAsync={addTagAsync}
+            removeTagAsync={removeTagAsync}
             handleClickEdit={handleClickEdit}
           />
         </ContextMenuTrigger>

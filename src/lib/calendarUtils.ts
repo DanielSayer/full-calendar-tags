@@ -18,3 +18,11 @@ export function getCalendarProps(width: number) {
     }
   }
 }
+
+export const generateCalendarId = (cacheBreaker: number, eventId: string) => {
+  return `event-${cacheBreaker}=${eventId}`
+}
+
+export const getCalendarId = (id: string) => {
+  return id.split('=')[1] ?? ''
+}

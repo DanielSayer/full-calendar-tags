@@ -73,10 +73,11 @@ const CreateEventDialog = (props: {
                     <FormLabel className="sr-only">Name</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder={'Event Name'}
+                        placeholder="Event Name"
                         type="text"
                         autoCapitalize="none"
                         autoCorrect="off"
+                        autoComplete="off"
                         disabled={isPending}
                         {...field}
                       />
