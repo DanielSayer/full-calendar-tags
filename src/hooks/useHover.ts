@@ -1,4 +1,5 @@
 import { type RefObject, useEffect, useState } from 'react'
+import useMouseControls from './useMouseControls'
 
 interface UseHoverProps {
   debounce?: number
@@ -10,7 +11,17 @@ export function useHover<T extends HTMLElement = HTMLElement>(
 ): boolean {
   const [isHovering, setIsHovering] = useState<boolean>(false)
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null)
-  const [isMouseDown, setIsMouseDown] = useState<boolean>(false)
+  const { isMouseDown } = useMouseControls()
+
+  useEffect(() => {
+    if (isMouseDown) {
+      setIsHovering(false)
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout)
+        setHoverTimeout(null)
+      }
+    }
+  }, [isMouseDown, hoverTimeout])
 
   useEffect(() => {
     const element = elementRef.current
@@ -35,29 +46,12 @@ export function useHover<T extends HTMLElement = HTMLElement>(
       setIsHovering(false)
     }
 
-    const handleMouseDown = () => {
-      setIsMouseDown(true)
-      setIsHovering(false)
-      if (hoverTimeout) {
-        clearTimeout(hoverTimeout)
-        setHoverTimeout(null)
-      }
-    }
-
-    const handleMouseUp = () => {
-      setIsMouseDown(false)
-    }
-
     element.addEventListener('mouseenter', handleMouseEnter)
     element.addEventListener('mouseleave', handleMouseLeave)
-    document.addEventListener('mousedown', handleMouseDown)
-    document.addEventListener('mouseup', handleMouseUp)
 
     return () => {
       element.removeEventListener('mouseenter', handleMouseEnter)
       element.removeEventListener('mouseleave', handleMouseLeave)
-      document.removeEventListener('mousedown', handleMouseDown)
-      document.removeEventListener('mouseup', handleMouseUp)
     }
   }, [elementRef, debounce, hoverTimeout, isMouseDown])
 
