@@ -1,8 +1,8 @@
-import { getTags } from '@/actions/tags'
+import useTags from '@/hooks/useTags'
 import { DragOverlay } from '@dnd-kit/core'
-import { useQuery } from '@tanstack/react-query'
 import Draggable from './draggable'
 import { Icons } from './icons'
+import { LoadingTag, TagItem } from './tag'
 import { CreateTagForm, type Tag } from './tags-sheet'
 import {
   Card,
@@ -12,13 +12,9 @@ import {
   CardTitle
 } from './ui/card'
 import { Separator } from './ui/separator'
-import { LoadingTag, TagItem } from './tag'
 
 export const TagsSection = (props: { activeTagId: string | null }) => {
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ['tags'],
-    queryFn: getTags
-  })
+  const { data, isLoading } = useTags()
   return (
     <Card>
       <CardHeader className="space-y-0 p-2">
@@ -35,7 +31,7 @@ export const TagsSection = (props: { activeTagId: string | null }) => {
           activeTagId={props.activeTagId}
         />
         <div className="flex justify-end">
-          <CreateTagForm refetch={refetch} />
+          <CreateTagForm />
         </div>
       </CardContent>
     </Card>
@@ -68,7 +64,7 @@ const Tags = (props: {
 
   return (
     <>
-      <div className="flex flex-col px-2">
+      <div className="flex max-h-52 flex-col overflow-y-auto px-2">
         {props.tags.map((tag) => (
           <div className="flex" key={tag.id}>
             <Draggable id={tag.id}>

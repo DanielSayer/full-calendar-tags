@@ -24,7 +24,7 @@ import {
   FormMessage
 } from './ui/form'
 import { Separator } from './ui/separator'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createTag } from '@/actions/tags'
 import { useState } from 'react'
 import LoadingButton from './loading-button'
@@ -32,7 +32,8 @@ import LoadingButton from './loading-button'
 export type Tag = TagRequest & { id: string }
 export type TagRequest = z.infer<typeof createTagSchema>
 
-export function CreateTagForm(props: { refetch: () => void }) {
+export function CreateTagForm() {
+  const client = useQueryClient()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const form = useForm<TagRequest>({
     defaultValues: { name: '', colour: '#7C3AED' },
@@ -42,7 +43,7 @@ export function CreateTagForm(props: { refetch: () => void }) {
   const { isPending, mutateAsync } = useMutation({
     mutationFn: createTag,
     onSuccess: () => {
-      props.refetch()
+      client.invalidateQueries({ queryKey: ['tags'] })
       setIsOpen(false)
       form.reset()
     },

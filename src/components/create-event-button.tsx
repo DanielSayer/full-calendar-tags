@@ -1,4 +1,4 @@
-import { CreateEventDates } from '@/hooks/useCreateEventDialog'
+import { CreateEventDates, EditEventDates } from '@/hooks/useCreateEventDialog'
 import CreateEventDialog from './create-event-dialog'
 import { Icons } from './icons'
 import { Button } from './ui/button'
@@ -14,6 +14,7 @@ const CreateEventButton = (props: {
   createEventDates: CreateEventDates | undefined
   toggle: () => void
   refetch: () => void
+  editEventDates: EditEventDates | undefined
 }) => {
   return (
     <Dialog open={props.isOpen} onOpenChange={props.toggle}>
@@ -35,9 +36,10 @@ const CreateEventButton = (props: {
           toggle={props.toggle}
           refetch={props.refetch}
           data={props.createEventDates}
+          editEventDates={props.editEventDates}
         />
         <DialogDescription className="sr-only">
-          Create a new event
+          {props.editEventDates ? 'Edit' : 'Create'} a new event
         </DialogDescription>
       </DialogContent>
     </Dialog>

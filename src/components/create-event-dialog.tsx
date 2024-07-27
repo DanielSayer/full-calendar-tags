@@ -1,8 +1,10 @@
-import { createEvent } from '@/actions/events'
+import { createEditEvent } from '@/actions/events'
+import { CreateEventDates, EditEventDates } from '@/hooks/useCreateEventDialog'
 import { createEventSchema } from '@/lib/validations/events'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 import { DatePicker } from './date-picker'
 import LoadingButton from './loading-button'
@@ -22,7 +24,6 @@ import {
   FormMessage
 } from './ui/form'
 import { Input } from './ui/input'
-import { CreateEventDates } from '@/hooks/useCreateEventDialog'
 
 export type EventRequest = z.infer<typeof createEventSchema>
 
@@ -30,33 +31,34 @@ const CreateEventDialog = (props: {
   data: CreateEventDates | undefined
   toggle: () => void
   refetch: () => void
+  editEventDates: EditEventDates | undefined
 }) => {
   const form = useForm<EventRequest>({
-    defaultValues: {
-      name: '',
-      date: props.data?.date,
-      startTime: props.data?.start ?? '',
-      endTime: props.data?.end ?? ''
-    },
+    defaultValues: getDefaultValues(props),
     resolver: zodResolver(createEventSchema)
   })
 
   const { isPending, mutateAsync } = useMutation({
-    mutationFn: createEvent,
+    mutationFn: createEditEvent,
     onSuccess: () => {
       props.refetch()
       props.toggle()
+      toast.success(
+        `Event successfully ${props.editEventDates ? 'edited' : 'created'}`
+      )
     }
   })
 
   const onSubmit = async (data: EventRequest) => {
-    await mutateAsync(data)
+    await mutateAsync({ event: data, id: props.editEventDates?.id })
   }
 
   return (
     <>
       <DialogHeader className="font-semibold">
-        <DialogTitle>Create Event</DialogTitle>
+        <DialogTitle>
+          {props.editEventDates ? 'Edit' : 'Create'} Event
+        </DialogTitle>
         <hr className="mt-2" />
       </DialogHeader>
       <Form {...form}>
@@ -139,10 +141,10 @@ const CreateEventDialog = (props: {
             </DialogClose>
             <LoadingButton
               type="submit"
-              loadingText="Creating..."
+              loadingText={`${props.editEventDates ? 'Editing' : 'Creating'}...`}
               isLoading={isPending}
             >
-              Create
+              {props.editEventDates ? 'Edit' : 'Create'}
             </LoadingButton>
           </DialogFooter>
         </form>
@@ -151,4 +153,23 @@ const CreateEventDialog = (props: {
   )
 }
 
+function getDefaultValues(props: {
+  data: CreateEventDates | undefined
+  editEventDates: EditEventDates | undefined
+}) {
+  if (props.editEventDates) {
+    return {
+      name: props.editEventDates.name,
+      date: props.editEventDates.date,
+      startTime: props.editEventDates.start,
+      endTime: props.editEventDates.end
+    }
+  }
+  return {
+    name: '',
+    date: props.data?.date,
+    startTime: props.data?.start ?? '',
+    endTime: props.data?.end ?? ''
+  }
+}
 export default CreateEventDialog

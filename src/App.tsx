@@ -10,8 +10,14 @@ import useDragAndDropTags from './hooks/useDragAndDropTags'
 import useGetCalendarEvents from './hooks/useGetCalendarEvents'
 
 function App() {
-  const { isOpen, toggle, createEventDates, handleSelect } =
-    useCreateEventDialog()
+  const {
+    isOpen,
+    editEventDates,
+    createEventDates,
+    toggle,
+    handleEdit,
+    handleSelect
+  } = useCreateEventDialog()
 
   const { selectedDate, calendarRef, dateRange, datesSet, handleSelectDate } =
     useCalendar()
@@ -31,6 +37,7 @@ function App() {
           isOpen={isOpen}
           toggle={toggle}
           createEventDates={createEventDates}
+          editEventDates={editEventDates}
         />
         <div className="hidden lg:block">
           <h1 className="my-2 text-lg font-semibold">Calendar</h1>
@@ -45,10 +52,11 @@ function App() {
         <div className="w-full">
           <EventCalendar
             calendarRef={calendarRef}
-            datesSet={datesSet}
             initialDate={selectedDate}
             events={events}
+            datesSet={datesSet}
             eventChange={handleEventChange}
+            select={handleSelect}
             eventContent={(e) => {
               const event = events?.find((c) => c.id === e.event.id)
               return (
@@ -57,10 +65,10 @@ function App() {
                   handleRemoveTag={removeTagAsync}
                   refetch={refetch}
                   addTagAsync={addTagAsync}
+                  handleClickEdit={handleEdit}
                 />
               )
             }}
-            select={handleSelect}
           />
         </div>
       </DndContext>

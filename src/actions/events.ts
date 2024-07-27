@@ -24,14 +24,35 @@ export const getEvents = async (dateRange: DateRange) => {
   })
 }
 
-export const createEvent = async (event: EventRequest) => {
+export const createEditEvent = async (req: {
+  id?: string
+  event: EventRequest
+}) => {
+  const start = `${req.event.date}T${req.event.startTime}`
+  const end = `${req.event.date}T${req.event.endTime}`
+  const request = {
+    name: req.event.name,
+    start,
+    end
+  }
+  if (req.id) {
+    return await updateEvent({ id: req.id, ...request })
+  }
+  return await createEvent(request)
+}
+
+const createEvent = async (event: {
+  name: string
+  start: string
+  end: string
+}) => {
   await delay(500)
   const events = JSON.parse(localStorage.getItem('events') || '[]') as Event[]
   const newEvent: Event = {
     id: crypto.randomUUID(),
     name: event.name || 'Untitled',
-    start: `${event.date}T${event.startTime}`,
-    end: `${event.date}T${event.endTime}`,
+    start: event.start,
+    end: event.end,
     tags: []
   }
   localStorage.setItem('events', JSON.stringify([...events, newEvent]))
