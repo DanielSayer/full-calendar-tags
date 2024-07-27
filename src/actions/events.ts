@@ -29,7 +29,7 @@ export const createEvent = async (event: EventRequest) => {
   const events = JSON.parse(localStorage.getItem('events') || '[]') as Event[]
   const newEvent: Event = {
     id: crypto.randomUUID(),
-    name: event.name,
+    name: event.name || 'Untitled',
     start: `${event.date}T${event.startTime}`,
     end: `${event.date}T${event.endTime}`,
     tags: []

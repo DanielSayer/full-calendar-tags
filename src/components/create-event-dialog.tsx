@@ -22,7 +22,7 @@ import {
   FormMessage
 } from './ui/form'
 import { Input } from './ui/input'
-import { CreateEventDates } from '@/App'
+import { CreateEventDates } from '@/hooks/useCreateEventDialog'
 
 export type EventRequest = z.infer<typeof createEventSchema>
 

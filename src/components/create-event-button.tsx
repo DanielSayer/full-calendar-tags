@@ -1,4 +1,4 @@
-import { CreateEventDates } from '@/App'
+import { CreateEventDates } from '@/hooks/useCreateEventDialog'
 import CreateEventDialog from './create-event-dialog'
 import { Icons } from './icons'
 import { Button } from './ui/button'
@@ -10,7 +10,6 @@ import {
 } from './ui/dialog'
 
 const CreateEventButton = (props: {
-  className?: string
   isOpen: boolean
   createEventDates: CreateEventDates | undefined
   toggle: () => void
@@ -19,14 +18,14 @@ const CreateEventButton = (props: {
   return (
     <Dialog open={props.isOpen} onOpenChange={props.toggle}>
       <DialogTrigger asChild onClick={props.toggle}>
-        <div className={props.className}>
+        <div>
           <Button
             className="absolute bottom-10 right-10 z-50 aspect-square h-14 w-14 rounded-full shadow-lg md:bottom-14 md:right-14 lg:hidden"
             size="icon"
           >
             <Icons.add className="h-8 w-8" />
           </Button>
-          <Button className="hidden lg:flex">
+          <Button className="hidden lg:absolute lg:left-[216px] lg:top-[18px] lg:flex">
             <Icons.add className="me-2" /> Create
           </Button>
         </div>
