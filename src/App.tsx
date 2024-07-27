@@ -19,8 +19,15 @@ function App() {
     handleSelect
   } = useCreateEventDialog()
 
-  const { selectedDate, calendarRef, dateRange, datesSet, handleSelectDate } =
-    useCalendar()
+  const {
+    selectedDate,
+    calendarRef,
+    dateRange,
+    referenceCalendarDate,
+    datesSet,
+    handleSelectDate,
+    onMonthChange
+  } = useCalendar()
 
   const { events, refetch, handleEventChange } = useCalendarEvents({
     dateRange
@@ -30,7 +37,7 @@ function App() {
     useDragAndDropTags({ refetch })
 
   return (
-    <div className="flex gap-8 p-4">
+    <div className="flex p-4 lg:gap-8">
       <DndContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
         <CreateEventButton
           refetch={refetch}
@@ -44,7 +51,8 @@ function App() {
           <Calendar
             mode="single"
             selected={selectedDate}
-            month={selectedDate}
+            month={referenceCalendarDate}
+            onMonthChange={onMonthChange}
             onSelect={handleSelectDate}
           />
           <TagsSection activeTagId={activeTagId} />

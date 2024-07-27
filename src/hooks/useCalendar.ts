@@ -9,6 +9,8 @@ const useCalendar = () => {
   const { width } = useWindowSize()
   const calendarRef = useRef<FullCalendar | null>(null)
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const [referenceCalendarDate, setReferenceCalendarDate] =
+    useState<Date>(selectedDate)
   const [dateRange, setDateRange] = useState<DateRange>({
     start: new Date(),
     end: new Date()
@@ -32,6 +34,7 @@ const useCalendar = () => {
       end: args.view.activeEnd
     })
     setSelectedDate(args.view.calendar.getDate())
+    setReferenceCalendarDate(args.view.calendar.getDate())
   }
 
   const handleSelectDate = (date: Date | undefined) => {
@@ -39,6 +42,11 @@ const useCalendar = () => {
     const selectDate = date ?? new Date()
     calendar.gotoDate(selectDate)
     setSelectedDate(selectDate)
+    setReferenceCalendarDate(selectDate)
+  }
+
+  const onMonthChange = (date: Date) => {
+    setReferenceCalendarDate(date)
   }
 
   useEffect(() => {
@@ -54,7 +62,9 @@ const useCalendar = () => {
     calendarRef,
     selectedDate,
     dateRange,
+    referenceCalendarDate,
     datesSet,
+    onMonthChange,
     handleSelectDate
   }
 }
