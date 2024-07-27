@@ -37,15 +37,15 @@ function App() {
     useDragAndDropTags({ refetch })
 
   return (
-    <div className="flex p-4 lg:gap-8">
-      <DndContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
-        <CreateEventButton
-          refetch={refetch}
-          isOpen={isOpen}
-          toggle={toggle}
-          createEventDates={createEventDates}
-          editEventDates={editEventDates}
-        />
+    <DndContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
+      <CreateEventButton
+        refetch={refetch}
+        isOpen={isOpen}
+        toggle={toggle}
+        createEventDates={createEventDates}
+        editEventDates={editEventDates}
+      />
+      <div className="flex p-4 lg:gap-8">
         <div className="hidden lg:block">
           <h1 className="my-2 text-lg font-semibold">Calendar</h1>
           <Calendar
@@ -81,8 +81,8 @@ function App() {
             }}
           />
         </div>
-      </DndContext>
-    </div>
+      </div>
+    </DndContext>
   )
 }
 

@@ -26,7 +26,7 @@ const CreateEventButton = (props: {
           >
             <Icons.add className="h-8 w-8" />
           </Button>
-          <Button className="hidden lg:absolute lg:left-[216px] lg:top-[18px] lg:flex">
+          <Button className="hidden lg:absolute lg:left-[188px] lg:top-[18px] lg:flex">
             <Icons.add className="me-2" /> Create
           </Button>
         </div>
