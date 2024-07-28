@@ -1,3 +1,4 @@
+import { createTag } from '@/actions/tags'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -7,14 +8,15 @@ import {
   SheetDescription,
   SheetFooter,
   SheetHeader,
-  SheetTitle,
-  SheetTrigger
+  SheetTitle
 } from '@/components/ui/sheet'
+import usePopups from '@/hooks/usePopups'
 import { createTagSchema } from '@/lib/validations/tags'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { Icons } from './icons'
+import LoadingButton from './loading-button'
 import {
   Form,
   FormControl,
@@ -24,17 +26,15 @@ import {
   FormMessage
 } from './ui/form'
 import { Separator } from './ui/separator'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createTag } from '@/actions/tags'
-import { useState } from 'react'
-import LoadingButton from './loading-button'
+import { addTagToEvent } from '@/actions/events'
+import { toast } from 'sonner'
 
 export type Tag = TagRequest & { id: string }
 export type TagRequest = z.infer<typeof createTagSchema>
 
-export function CreateTagForm() {
+export function TagsSheet() {
   const client = useQueryClient()
-  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const { isTagsPopupOpen, tagsPopupConfig, toggleTagsPopup } = usePopups()
   const form = useForm<TagRequest>({
     defaultValues: { name: '', colour: '#7C3AED' },
     resolver: zodResolver(createTagSchema)
@@ -42,10 +42,17 @@ export function CreateTagForm() {
 
   const { isPending, mutateAsync } = useMutation({
     mutationFn: createTag,
-    onSuccess: () => {
+    onSuccess: (id) => {
       client.invalidateQueries({ queryKey: ['tags'] })
-      setIsOpen(false)
+      toggleTagsPopup()
       form.reset()
+
+      if (tagsPopupConfig.addOnCreate) {
+        addTagToEventAsync({
+          eventId: tagsPopupConfig.addOnCreate.eventId,
+          tagId: id
+        })
+      }
     },
     onError: (error) => {
       form.setError('name', {
@@ -54,17 +61,22 @@ export function CreateTagForm() {
     }
   })
 
+  const { mutateAsync: addTagToEventAsync } = useMutation({
+    mutationFn: addTagToEvent,
+    onSuccess: () => {
+      toast.success('Tag added to event', { duration: 1500 })
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    }
+  })
+
   const onSubmit = async (data: TagRequest) => {
     await mutateAsync(data)
   }
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
-        <Button variant="outline">
-          <Icons.add className="me-2 h-4 w-4" /> Add tag
-        </Button>
-      </SheetTrigger>
+    <Sheet open={isTagsPopupOpen} onOpenChange={toggleTagsPopup}>
       <SheetContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>

@@ -8,13 +8,19 @@ export const getTags = async () => {
 }
 
 export const createTag = async (tag: TagRequest) => {
+  const tagName = tag.name.trim()
+  if (!tagName) {
+    throw Error('Tag name is required')
+  }
   const existingTags = await getTags()
-  if (existingTags.find((t) => t.name === tag.name)) {
+  if (existingTags.find((t) => t.name === tagName)) {
     throw Error('Tag with that name already exists')
   }
+  const id = crypto.randomUUID()
   const newTag: Tag = {
-    id: crypto.randomUUID(),
+    id,
     ...tag
   }
   localStorage.setItem('tags', JSON.stringify([...existingTags, newTag]))
+  return id
 }

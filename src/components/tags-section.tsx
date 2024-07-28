@@ -1,9 +1,11 @@
+import usePopups from '@/hooks/usePopups'
 import useTags from '@/hooks/useTags'
 import { DragOverlay } from '@dnd-kit/core'
 import Draggable from './draggable'
 import { Icons } from './icons'
 import { LoadingTag, TagItem } from './tag'
-import { CreateTagForm, type Tag } from './tags-sheet'
+import type { Tag } from './tags-sheet'
+import { Button } from './ui/button'
 import {
   Card,
   CardContent,
@@ -14,6 +16,7 @@ import {
 import { Separator } from './ui/separator'
 
 export const TagsSection = (props: { activeTagId: string | null }) => {
+  const { toggleTagsPopup } = usePopups()
   const { data, isLoading } = useTags()
   return (
     <Card>
@@ -31,7 +34,9 @@ export const TagsSection = (props: { activeTagId: string | null }) => {
           activeTagId={props.activeTagId}
         />
         <div className="flex justify-end">
-          <CreateTagForm />
+          <Button onClick={() => toggleTagsPopup()} variant="outline">
+            <Icons.add className="mr-2 h-4 w-4" /> Add tag
+          </Button>
         </div>
       </CardContent>
     </Card>

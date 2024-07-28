@@ -14,6 +14,7 @@ import {
   ContextMenuSubTrigger
 } from './ui/context-menu'
 import { CalendarEventItem } from '@/hooks/useCalendarEvents'
+import usePopups from '@/hooks/usePopups'
 
 type CalendarEventMenuProps = {
   event: CalendarEventItem
@@ -30,6 +31,7 @@ export const CalendarEventMenu = ({
   removeTagAsync,
   handleClickEdit
 }: CalendarEventMenuProps) => {
+  const { toggleTagsPopup, configureTagsPopup } = usePopups()
   const { mutateAsync } = useMutation({
     mutationFn: deleteEvent,
     onSuccess: () => {
@@ -48,6 +50,11 @@ export const CalendarEventMenu = ({
     })
   }
 
+  const handleAddTag = () => {
+    configureTagsPopup({ addOnCreate: { eventId: event.id } })
+    toggleTagsPopup()
+  }
+
   return (
     <ContextMenuContent>
       <ContextMenuItem onClick={() => handleEdit()}>Edit Event</ContextMenuItem>
@@ -55,6 +62,9 @@ export const CalendarEventMenu = ({
         <ContextMenuSubTrigger>Add Tag</ContextMenuSubTrigger>
         <ContextMenuSubContent className="max-h-40 overflow-y-auto">
           <AddTagMenu event={event} addTagAsync={addTagAsync} />
+          <ContextMenuItem onClick={() => handleAddTag()}>
+            <Icons.add className="mr-2 h-4 w-4" /> Add tag
+          </ContextMenuItem>
         </ContextMenuSubContent>
       </ContextMenuSub>
       {event.extendedProps.tags.length > 0 && (
