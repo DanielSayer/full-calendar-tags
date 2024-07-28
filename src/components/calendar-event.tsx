@@ -63,7 +63,11 @@ const CalendarEvent = ({
             </ContextMenu>
           </div>
         </PopoverTrigger>
-        <PopoverContent side="right" sideOffset={10} className="w-fit max-w-72">
+        <PopoverContent
+          side="right"
+          sideOffset={10}
+          className="min-w-52 max-w-min"
+        >
           <CalendarEventPopover event={event} />
         </PopoverContent>
       </Popover>
