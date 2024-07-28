@@ -12,7 +12,6 @@ import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 
 type EventProps = {
   event: CalendarEventItem | undefined
-  refetch: () => void
   addTagAsync: (req: { eventId: string; tagId: string }) => void
   removeTagAsync: (req: { eventId: string; tagId: string }) => void
   handleRemoveTag: (req: { eventId: string; tagId: string }) => void
@@ -21,7 +20,6 @@ type EventProps = {
 const CalendarEvent = ({
   event,
   handleRemoveTag,
-  refetch,
   addTagAsync,
   removeTagAsync
 }: EventProps) => {
@@ -59,7 +57,6 @@ const CalendarEvent = ({
               </ContextMenuTrigger>
               <CalendarEventMenu
                 event={event}
-                refetch={refetch}
                 addTagAsync={addTagAsync}
                 removeTagAsync={removeTagAsync}
               />

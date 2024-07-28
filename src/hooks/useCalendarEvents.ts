@@ -20,7 +20,7 @@ const useCalendarEvents = ({ dateRange }: { dateRange: DateRange }) => {
   const { configureEventPopup, toggleEventPopup } = usePopups()
   const [localEvents, setLocalEvents] = useState<CalendarEventItem[]>([])
 
-  const { data, refetch } = useQuery({
+  const { data } = useQuery({
     queryKey: ['events', dateRange],
     queryFn: () => getEvents(dateRange),
     enabled: !!dateRange.start && !!dateRange.end
@@ -91,7 +91,6 @@ const useCalendarEvents = ({ dateRange }: { dateRange: DateRange }) => {
 
   return {
     events: localEvents,
-    refetch,
     handleSelect,
     handleEventChange
   }

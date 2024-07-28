@@ -2,7 +2,7 @@ import { deleteEvent, duplicateEvent } from '@/actions/events'
 import { CalendarEventItem } from '@/hooks/useCalendarEvents'
 import usePopups from '@/hooks/usePopups'
 import useTags from '@/hooks/useTags'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
 import { Icons } from './icons'
@@ -17,14 +17,12 @@ import {
 
 type CalendarEventMenuProps = {
   event: CalendarEventItem
-  refetch: () => void
   addTagAsync: (req: { eventId: string; tagId: string }) => void
   removeTagAsync: (req: { eventId: string; tagId: string }) => void
 }
 
 export const CalendarEventMenu = ({
   event,
-  refetch,
   addTagAsync,
   removeTagAsync
 }: CalendarEventMenuProps) => {
@@ -34,11 +32,12 @@ export const CalendarEventMenu = ({
     toggleEventPopup,
     configureEventPopup
   } = usePopups()
+  const queryClient = useQueryClient()
   const { mutateAsync } = useMutation({
     mutationFn: deleteEvent,
     onSuccess: () => {
       toast.success('Event deleted')
-      refetch()
+      queryClient.invalidateQueries({ queryKey: ['events'] })
     }
   })
 
@@ -46,7 +45,7 @@ export const CalendarEventMenu = ({
     mutationFn: duplicateEvent,
     onSuccess: () => {
       toast.success('Event duplicated')
-      refetch()
+      queryClient.invalidateQueries({ queryKey: ['events'] })
     }
   })
 

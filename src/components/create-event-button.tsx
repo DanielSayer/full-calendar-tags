@@ -9,7 +9,7 @@ import {
   DialogTrigger
 } from './ui/dialog'
 
-const CreateEventButton = (props: { refetch: () => void }) => {
+const CreateEventButton = () => {
   const { isEventPopupOpen, eventPopupConfig, toggleEventPopup } = usePopups()
   const isEditingEvent = eventPopupConfig.mode !== 'edit'
   return (
@@ -28,7 +28,7 @@ const CreateEventButton = (props: { refetch: () => void }) => {
         </div>
       </DialogTrigger>
       <DialogContent className="gap-2">
-        <CreateEventDialog toggle={toggleEventPopup} refetch={props.refetch} />
+        <CreateEventDialog toggle={toggleEventPopup} />
         <DialogDescription className="sr-only">
           {isEditingEvent ? 'Edit' : 'Create'} a new event
         </DialogDescription>

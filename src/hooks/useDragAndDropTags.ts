@@ -1,11 +1,12 @@
 import { addTagToEvent, removeTagFromEvent } from '@/actions/events'
 import { getCalendarId } from '@/lib/calendarUtils'
 import { DragEndEvent, DragStartEvent } from '@dnd-kit/core'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-const useDragAndDropTags = (props: { refetch: () => void }) => {
+const useDragAndDropTags = () => {
+  const queryClient = useQueryClient()
   const [activeTagId, setActiveTagId] = useState<string | null>(null)
 
   const onDragStart = (e: DragStartEvent) => {
@@ -16,7 +17,7 @@ const useDragAndDropTags = (props: { refetch: () => void }) => {
     mutationFn: addTagToEvent,
     onSuccess: () => {
       toast.success('Tag added to event', { duration: 1500 })
-      props.refetch()
+      queryClient.invalidateQueries({ queryKey: ['events'] })
     },
     onError: (error) => {
       toast.error(error.message)
@@ -27,7 +28,7 @@ const useDragAndDropTags = (props: { refetch: () => void }) => {
     mutationFn: removeTagFromEvent,
     onSuccess: () => {
       toast.success('Tag removed from event', { duration: 1500 })
-      props.refetch()
+      queryClient.invalidateQueries({ queryKey: ['events'] })
     },
     onError: (error) => {
       toast.error(error.message)

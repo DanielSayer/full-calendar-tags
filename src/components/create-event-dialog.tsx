@@ -3,7 +3,7 @@ import usePopups from '@/hooks/usePopups'
 import { createEventSchema } from '@/lib/validations/events'
 import { EventPopupConfig } from '@/providers/popup-provider'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -31,12 +31,9 @@ import { Separator } from './ui/separator'
 
 export type EventRequest = z.infer<typeof createEventSchema>
 
-const CreateEventDialog = (props: {
-  toggle: () => void
-  refetch: () => void
-}) => {
+const CreateEventDialog = (props: { toggle: () => void }) => {
   const [multiDay, setMultiDay] = useState(false)
-
+  const queryClient = useQueryClient()
   const { eventPopupConfig } = usePopups()
   const isEditingEvent = eventPopupConfig.mode === 'edit'
   const eventId =
@@ -64,7 +61,7 @@ const CreateEventDialog = (props: {
   const { isPending, mutateAsync } = useMutation({
     mutationFn: createEditEvent,
     onSuccess: () => {
-      props.refetch()
+      queryClient.invalidateQueries({ queryKey: ['events'] })
       props.toggle()
       toast.success(
         `Event successfully ${isEditingEvent ? 'edited' : 'created'}`

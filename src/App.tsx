@@ -19,17 +19,16 @@ function App() {
     onMonthChange
   } = useCalendar()
 
-  const { events, refetch, handleEventChange, handleSelect } =
-    useCalendarEvents({
-      dateRange
-    })
+  const { events, handleEventChange, handleSelect } = useCalendarEvents({
+    dateRange
+  })
 
   const { activeTagId, onDragStart, onDragEnd, removeTagAsync, addTagAsync } =
-    useDragAndDropTags({ refetch })
+    useDragAndDropTags()
 
   return (
     <DndContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
-      <CreateEventButton refetch={refetch} />
+      <CreateEventButton />
       <div className="flex p-4 lg:gap-8">
         <div className="hidden w-[276px] lg:block">
           <h1 className="my-2 text-lg font-semibold">Calendar</h1>
@@ -57,7 +56,6 @@ function App() {
                 <CalendarEvent
                   event={event}
                   handleRemoveTag={removeTagAsync}
-                  refetch={refetch}
                   addTagAsync={addTagAsync}
                   removeTagAsync={removeTagAsync}
                 />
