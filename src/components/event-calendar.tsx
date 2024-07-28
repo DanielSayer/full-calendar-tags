@@ -39,6 +39,7 @@ export const EventCalendar = ({ calendarRef, ...props }: CalendarProps) => {
       editable
       selectable
       selectAllow={(span) => span.start.getDate() === span.end.getDate()}
+      dayMaxEvents={2}
     />
   )
 }

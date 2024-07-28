@@ -16,8 +16,8 @@ const EventContent = ({ event, handleRemoveTag }: EventContentProps) => {
   }
   return (
     <div className="h-full w-full">
-      <p className="text-sm font-medium">{event.title}</p>
-      <p className="mb-1 text-xs">
+      <p className="text-sm font-medium text-accent">{event.title}</p>
+      <p className="mb-1 text-xs text-accent">
         {formatDate(event.start)} - {formatDate(event.end)}
       </p>
       <div className="flex flex-wrap gap-2">
