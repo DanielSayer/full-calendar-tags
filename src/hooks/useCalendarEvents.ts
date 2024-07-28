@@ -1,5 +1,5 @@
 import { DateRange } from '@/types/misc'
-import { EventDropArg } from '@fullcalendar/core/index.js'
+import { DateSelectArg, EventDropArg } from '@fullcalendar/core/index.js'
 import { EventResizeDoneArg } from '@fullcalendar/interaction/index.js'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { format } from 'date-fns'
@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { getEvents, updateEvent } from '../actions/events'
 import { Tag } from '../components/tags-sheet'
+import usePopups from './usePopups'
 
 export type CalendarEventItem = {
   id: string
@@ -17,6 +18,7 @@ export type CalendarEventItem = {
 }
 
 const useCalendarEvents = ({ dateRange }: { dateRange: DateRange }) => {
+  const { configureEventPopup, toggleEventPopup } = usePopups()
   const [localEvents, setLocalEvents] = useState<CalendarEventItem[]>([])
 
   const { data, refetch } = useQuery({
@@ -24,10 +26,6 @@ const useCalendarEvents = ({ dateRange }: { dateRange: DateRange }) => {
     queryFn: () => getEvents(dateRange),
     enabled: !!dateRange.start && !!dateRange.end
   })
-
-  const handleChangeLocalEvents = (events: CalendarEventItem[]) => {
-    setLocalEvents(events)
-  }
 
   useEffect(() => {
     if (!data) {
@@ -82,13 +80,22 @@ const useCalendarEvents = ({ dateRange }: { dateRange: DateRange }) => {
       return e
     })
 
-    handleChangeLocalEvents(updatedEvents)
+    setLocalEvents(updatedEvents)
     mutate(updatedEvent)
+  }
+
+  const handleSelect = (args: DateSelectArg) => {
+    const start = format(args.start, 'HH:mm')
+    const end = format(args.end, 'HH:mm')
+    const date = format(args.start, 'yyyy-MM-dd')
+    configureEventPopup({ mode: 'create', create: { date, start, end } })
+    toggleEventPopup()
   }
 
   return {
     events: localEvents,
     refetch,
+    handleSelect,
     handleEventChange
   }
 }

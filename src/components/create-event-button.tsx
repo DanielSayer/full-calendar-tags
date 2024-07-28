@@ -1,4 +1,4 @@
-import { CreateEventDates, EditEventDates } from '@/hooks/useCreateEventDialog'
+import usePopups from '@/hooks/usePopups'
 import CreateEventDialog from './create-event-dialog'
 import { Icons } from './icons'
 import { Button } from './ui/button'
@@ -9,16 +9,12 @@ import {
   DialogTrigger
 } from './ui/dialog'
 
-const CreateEventButton = (props: {
-  isOpen: boolean
-  createEventDates: CreateEventDates | undefined
-  toggle: () => void
-  refetch: () => void
-  editEventDates: EditEventDates | undefined
-}) => {
+const CreateEventButton = (props: { refetch: () => void }) => {
+  const { isEventPopupOpen, eventPopupConfig, toggleEventPopup } = usePopups()
+  const isEditingEvent = eventPopupConfig.mode !== 'edit'
   return (
-    <Dialog open={props.isOpen} onOpenChange={props.toggle}>
-      <DialogTrigger asChild onClick={props.toggle}>
+    <Dialog open={isEventPopupOpen} onOpenChange={toggleEventPopup}>
+      <DialogTrigger asChild onClick={toggleEventPopup}>
         <div>
           <Button
             className="absolute bottom-10 right-10 z-50 aspect-square h-14 w-14 rounded-full shadow-lg md:bottom-14 md:right-14 lg:hidden"
@@ -32,14 +28,9 @@ const CreateEventButton = (props: {
         </div>
       </DialogTrigger>
       <DialogContent>
-        <CreateEventDialog
-          toggle={props.toggle}
-          refetch={props.refetch}
-          data={props.createEventDates}
-          editEventDates={props.editEventDates}
-        />
+        <CreateEventDialog toggle={toggleEventPopup} refetch={props.refetch} />
         <DialogDescription className="sr-only">
-          {props.editEventDates ? 'Edit' : 'Create'} a new event
+          {isEditingEvent ? 'Edit' : 'Create'} a new event
         </DialogDescription>
       </DialogContent>
     </Dialog>

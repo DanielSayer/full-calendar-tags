@@ -5,20 +5,10 @@ import CreateEventButton from './components/create-event-button'
 import { EventCalendar } from './components/event-calendar'
 import { TagsSection } from './components/tags-section'
 import useCalendar from './hooks/useCalendar'
-import useCreateEventDialog from './hooks/useCreateEventDialog'
 import useDragAndDropTags from './hooks/useDragAndDropTags'
 import useCalendarEvents from './hooks/useCalendarEvents'
 
 function App() {
-  const {
-    isOpen,
-    editEventDates,
-    createEventDates,
-    toggle,
-    handleEdit,
-    handleSelect
-  } = useCreateEventDialog()
-
   const {
     selectedDate,
     calendarRef,
@@ -29,22 +19,17 @@ function App() {
     onMonthChange
   } = useCalendar()
 
-  const { events, refetch, handleEventChange } = useCalendarEvents({
-    dateRange
-  })
+  const { events, refetch, handleEventChange, handleSelect } =
+    useCalendarEvents({
+      dateRange
+    })
 
   const { activeTagId, onDragStart, onDragEnd, removeTagAsync, addTagAsync } =
     useDragAndDropTags({ refetch })
 
   return (
     <DndContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
-      <CreateEventButton
-        refetch={refetch}
-        isOpen={isOpen}
-        toggle={toggle}
-        createEventDates={createEventDates}
-        editEventDates={editEventDates}
-      />
+      <CreateEventButton refetch={refetch} />
       <div className="flex p-4 lg:gap-8">
         <div className="hidden w-[276px] lg:block">
           <h1 className="my-2 text-lg font-semibold">Calendar</h1>
@@ -75,7 +60,6 @@ function App() {
                   refetch={refetch}
                   addTagAsync={addTagAsync}
                   removeTagAsync={removeTagAsync}
-                  handleClickEdit={handleEdit}
                 />
               )
             }}

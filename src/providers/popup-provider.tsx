@@ -6,11 +6,35 @@ type TagsPopupConfig = {
   }
 }
 
+export type EventPopupConfig =
+  | {
+      mode: 'create'
+      create?: {
+        date: string
+        start: string
+        end: string
+      }
+    }
+  | {
+      mode: 'edit'
+      edit: {
+        id: string
+        name: string
+        date: string
+        start: string
+        end: string
+      }
+    }
+
 type PopupContextType = {
   isTagsPopupOpen: boolean
   tagsPopupConfig: TagsPopupConfig
+  isEventPopupOpen: boolean
+  eventPopupConfig: EventPopupConfig
   toggleTagsPopup: () => void
+  toggleEventPopup: () => void
   configureTagsPopup: (config: TagsPopupConfig) => void
+  configureEventPopup: (config: EventPopupConfig) => void
 }
 
 export const PopupContext = createContext<PopupContextType>(
@@ -19,6 +43,10 @@ export const PopupContext = createContext<PopupContextType>(
 
 export const PopupProvider = ({ children }: { children: React.ReactNode }) => {
   const [isTagsPopupOpen, setIsTagsPopupOpen] = useState<boolean>(false)
+  const [isEventPopupOpen, setIsEventPopupOpen] = useState<boolean>(false)
+  const [eventPopupConfig, setEventPopupConfig] = useState<EventPopupConfig>(
+    {} as EventPopupConfig
+  )
   const [tagsPopupConfig, setTagsPopupConfig] = useState<TagsPopupConfig>(
     {} as TagsPopupConfig
   )
@@ -30,8 +58,19 @@ export const PopupProvider = ({ children }: { children: React.ReactNode }) => {
     setIsTagsPopupOpen(!isTagsPopupOpen)
   }
 
+  const toggleEventPopup = () => {
+    if (isEventPopupOpen) {
+      setEventPopupConfig({} as EventPopupConfig)
+    }
+    setIsEventPopupOpen(!isEventPopupOpen)
+  }
+
   const configureTagsPopup = (config: TagsPopupConfig) => {
     setTagsPopupConfig(config)
+  }
+
+  const configureEventPopup = (config: EventPopupConfig) => {
+    setEventPopupConfig(config)
   }
 
   return (
@@ -39,8 +78,12 @@ export const PopupProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         isTagsPopupOpen,
         tagsPopupConfig,
+        isEventPopupOpen,
+        eventPopupConfig,
         configureTagsPopup,
-        toggleTagsPopup
+        toggleTagsPopup,
+        configureEventPopup,
+        toggleEventPopup
       }}
     >
       {children}

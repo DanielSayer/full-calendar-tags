@@ -1,5 +1,6 @@
 import { deleteEvent, duplicateEvent } from '@/actions/events'
-import { EditEventDates } from '@/hooks/useCreateEventDialog'
+import { CalendarEventItem } from '@/hooks/useCalendarEvents'
+import usePopups from '@/hooks/usePopups'
 import useTags from '@/hooks/useTags'
 import { useMutation } from '@tanstack/react-query'
 import { format } from 'date-fns'
@@ -13,25 +14,26 @@ import {
   ContextMenuSubContent,
   ContextMenuSubTrigger
 } from './ui/context-menu'
-import { CalendarEventItem } from '@/hooks/useCalendarEvents'
-import usePopups from '@/hooks/usePopups'
 
 type CalendarEventMenuProps = {
   event: CalendarEventItem
   refetch: () => void
   addTagAsync: (req: { eventId: string; tagId: string }) => void
   removeTagAsync: (req: { eventId: string; tagId: string }) => void
-  handleClickEdit: (event: EditEventDates) => void
 }
 
 export const CalendarEventMenu = ({
   event,
   refetch,
   addTagAsync,
-  removeTagAsync,
-  handleClickEdit
+  removeTagAsync
 }: CalendarEventMenuProps) => {
-  const { toggleTagsPopup, configureTagsPopup } = usePopups()
+  const {
+    toggleTagsPopup,
+    configureTagsPopup,
+    toggleEventPopup,
+    configureEventPopup
+  } = usePopups()
   const { mutateAsync } = useMutation({
     mutationFn: deleteEvent,
     onSuccess: () => {
@@ -49,13 +51,17 @@ export const CalendarEventMenu = ({
   })
 
   const handleEdit = () => {
-    handleClickEdit({
-      id: event.id,
-      name: event.title,
-      date: format(event.start, 'yyyy-MM-dd'),
-      start: format(event.start, 'HH:mm'),
-      end: format(event.end, 'HH:mm')
+    configureEventPopup({
+      mode: 'edit',
+      edit: {
+        id: event.id,
+        name: event.title,
+        date: format(event.start, 'yyyy-MM-dd'),
+        start: format(event.start, 'HH:mm'),
+        end: format(event.end, 'HH:mm')
+      }
     })
+    toggleEventPopup()
   }
 
   const handleAddTag = () => {

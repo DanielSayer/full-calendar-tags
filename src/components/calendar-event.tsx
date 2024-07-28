@@ -1,5 +1,4 @@
 import { CalendarEventItem } from '@/hooks/useCalendarEvents'
-import { EditEventDates } from '@/hooks/useCreateEventDialog'
 import { useHover } from '@/hooks/useHover'
 import { generateCalendarId } from '@/lib/calendarUtils'
 import { cn } from '@/lib/utils'
@@ -17,7 +16,6 @@ type EventProps = {
   addTagAsync: (req: { eventId: string; tagId: string }) => void
   removeTagAsync: (req: { eventId: string; tagId: string }) => void
   handleRemoveTag: (req: { eventId: string; tagId: string }) => void
-  handleClickEdit: (event: EditEventDates) => void
 }
 
 const CalendarEvent = ({
@@ -25,8 +23,7 @@ const CalendarEvent = ({
   handleRemoveTag,
   refetch,
   addTagAsync,
-  removeTagAsync,
-  handleClickEdit
+  removeTagAsync
 }: EventProps) => {
   const eventRef = useRef<HTMLDivElement>(null)
   const isHovering = useHover(eventRef, { debounce: 250 })
@@ -65,7 +62,6 @@ const CalendarEvent = ({
                 refetch={refetch}
                 addTagAsync={addTagAsync}
                 removeTagAsync={removeTagAsync}
-                handleClickEdit={handleClickEdit}
               />
             </ContextMenu>
           </div>
