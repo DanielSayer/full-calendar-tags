@@ -6,9 +6,15 @@ export const createEventSchema = z
     name: z.string().max(255, 'Name must be less than 255 characters'),
     startTime: time,
     endTime: time,
-    date: date
+    startDate: date,
+    endDate: date.optional()
   })
-  .refine((data) => data.startTime < data.endTime, {
-    message: 'End time must be after start time',
-    path: ['endTime']
-  })
+  .refine(
+    (data) =>
+      new Date(`${data.startDate}T${data.startTime}`) <
+      new Date(`${data.endDate ?? data.startDate}T${data.endTime}`),
+    {
+      message: 'End time must be after start time',
+      path: ['endTime']
+    }
+  )

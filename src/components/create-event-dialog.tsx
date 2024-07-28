@@ -25,6 +25,9 @@ import {
   FormMessage
 } from './ui/form'
 import { Input } from './ui/input'
+import { Label } from './ui/label'
+import { useEffect, useState } from 'react'
+import { Separator } from './ui/separator'
 
 export type EventRequest = z.infer<typeof createEventSchema>
 
@@ -32,6 +35,8 @@ const CreateEventDialog = (props: {
   toggle: () => void
   refetch: () => void
 }) => {
+  const [multiDay, setMultiDay] = useState(false)
+
   const { eventPopupConfig } = usePopups()
   const isEditingEvent = eventPopupConfig.mode === 'edit'
   const eventId =
@@ -40,6 +45,21 @@ const CreateEventDialog = (props: {
     defaultValues: getDefaultValues(eventPopupConfig),
     resolver: zodResolver(createEventSchema)
   })
+
+  useEffect(() => {
+    const { watch } = form
+    const startDate = watch('startDate')
+    const endDate = watch('endDate')
+    if (startDate && endDate && startDate !== endDate) {
+      setMultiDay(true)
+    }
+  }, [form])
+
+  useEffect(() => {
+    if (!multiDay) {
+      form.resetField('endDate')
+    }
+  }, [form, multiDay])
 
   const { isPending, mutateAsync } = useMutation({
     mutationFn: createEditEvent,
@@ -60,7 +80,7 @@ const CreateEventDialog = (props: {
     <>
       <DialogHeader className="font-semibold">
         <DialogTitle>{isEditingEvent ? 'Edit' : 'Create'} Event</DialogTitle>
-        <hr className="mt-2" />
+        <Separator className="mt-2" />
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -91,6 +111,36 @@ const CreateEventDialog = (props: {
             <div className="flex w-full gap-2">
               <FormField
                 control={form.control}
+                name="startDate"
+                render={({ field }) => (
+                  <FormItem className="w-full space-y-1">
+                    <FormLabel>{multiDay ? 'Start Date' : 'Date'}</FormLabel>
+                    <FormControl>
+                      <DatePicker date={field.value} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {multiDay && (
+                <FormField
+                  control={form.control}
+                  name="endDate"
+                  render={({ field }) => (
+                    <FormItem className="w-full space-y-1">
+                      <FormLabel>End Date</FormLabel>
+                      <FormControl>
+                        <DatePicker date={field.value} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+            </div>
+            <div className="flex w-full gap-2">
+              <FormField
+                control={form.control}
                 name="startTime"
                 render={({ field }) => (
                   <FormItem className="w-full space-y-1">
@@ -116,20 +166,17 @@ const CreateEventDialog = (props: {
                 )}
               />
             </div>
-
-            <FormField
-              control={form.control}
-              name="date"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="sr-only">Date</FormLabel>
-                  <FormControl>
-                    <DatePicker date={field.value} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="flex items-center gap-2">
+              <Input
+                type="checkbox"
+                id="multiDay"
+                name="multiDay"
+                className="h-4 w-4 accent-primary"
+                checked={multiDay}
+                onChange={(e) => setMultiDay(e.target.checked)}
+              />
+              <Label htmlFor="multiDay">Multi-day event</Label>
+            </div>
           </div>
           <FormMessage className="mt-2">
             {form.formState.errors?.root?.message}
@@ -157,20 +204,20 @@ const CreateEventDialog = (props: {
 
 function getDefaultValues(config: EventPopupConfig) {
   if (config.mode === 'edit') {
-    const { name, date, start, end } = config.edit!
-
     return {
-      name,
-      date,
-      startTime: start,
-      endTime: end
+      name: config.edit.name,
+      startDate: config.edit.startDate,
+      endDate: config.edit.endDate,
+      startTime: config.edit.startTime,
+      endTime: config.edit.endTime
     }
   }
   return {
     name: '',
-    date: config.create?.date,
-    startTime: config.create?.start ?? '',
-    endTime: config.create?.end ?? ''
+    startDate: config.create?.startDate,
+    endDate: config.create?.endDate,
+    startTime: config.create?.startTime ?? '',
+    endTime: config.create?.endTime ?? ''
   }
 }
 export default CreateEventDialog

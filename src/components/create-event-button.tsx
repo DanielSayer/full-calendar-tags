@@ -27,7 +27,7 @@ const CreateEventButton = (props: { refetch: () => void }) => {
           </Button>
         </div>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="gap-2">
         <CreateEventDialog toggle={toggleEventPopup} refetch={props.refetch} />
         <DialogDescription className="sr-only">
           {isEditingEvent ? 'Edit' : 'Create'} a new event

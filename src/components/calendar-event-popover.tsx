@@ -17,12 +17,19 @@ const CalendarEventPopover = ({ event }: CalendarEventPopoverProps) => {
     const dateObj = new Date(date)
     return format(dateObj, 'dd MMM yyyy')
   }
+
+  const getDisplayDate = () => {
+    const startDate = formatDate(event.start)
+    const endDate = formatDate(event.end)
+    if (startDate === endDate) {
+      return startDate
+    }
+    return `${startDate} - ${endDate}`
+  }
   return (
     <div>
       <h3 className="flex break-words text-sm font-semibold">{event.title}</h3>
-      <p className="mb-1 text-xs text-muted-foreground">
-        {formatDate(event.start)}
-      </p>
+      <p className="mb-1 text-xs text-muted-foreground">{getDisplayDate()}</p>
       <p className="mb-1 text-xs text-muted-foreground">
         {formatTime(event.start)} - {formatTime(event.end)}
       </p>

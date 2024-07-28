@@ -4,7 +4,6 @@ import { EventResizeDoneArg } from '@fullcalendar/interaction/index.js'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import { useEffect, useState } from 'react'
-import { toast } from 'sonner'
 import { getEvents, updateEvent } from '../actions/events'
 import { Tag } from '../components/tags-sheet'
 import usePopups from './usePopups'
@@ -57,12 +56,6 @@ const useCalendarEvents = ({ dateRange }: { dateRange: DateRange }) => {
       return
     }
 
-    if (start.toDateString() !== end.toDateString()) {
-      toast.error('Cannot have events spanning multiple days')
-      event.revert()
-      return
-    }
-
     const eventToChange = localEvents?.find((c) => c.id === event.event.id)
     if (!eventToChange) {
       return
@@ -85,10 +78,14 @@ const useCalendarEvents = ({ dateRange }: { dateRange: DateRange }) => {
   }
 
   const handleSelect = (args: DateSelectArg) => {
-    const start = format(args.start, 'HH:mm')
-    const end = format(args.end, 'HH:mm')
-    const date = format(args.start, 'yyyy-MM-dd')
-    configureEventPopup({ mode: 'create', create: { date, start, end } })
+    const startTime = format(args.start, 'HH:mm')
+    const endTime = format(args.end, 'HH:mm')
+    const startDate = format(args.start, 'yyyy-MM-dd')
+    const endDate = format(args.end, 'yyyy-MM-dd')
+    configureEventPopup({
+      mode: 'create',
+      create: { startDate, startTime, endDate, endTime }
+    })
     toggleEventPopup()
   }
 

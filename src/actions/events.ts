@@ -31,8 +31,8 @@ export const createEditEvent = async (req: {
   id?: string
   event: EventRequest
 }) => {
-  const start = `${req.event.date}T${req.event.startTime}`
-  const end = `${req.event.date}T${req.event.endTime}`
+  const start = `${req.event.startDate}T${req.event.startTime}`
+  const end = `${req.event.endDate ?? req.event.startDate}T${req.event.endTime}`
   const request = {
     name: req.event.name,
     start,

@@ -10,9 +10,10 @@ export type EventPopupConfig =
   | {
       mode: 'create'
       create?: {
-        date: string
-        start: string
-        end: string
+        startDate: string
+        endDate: string
+        startTime: string
+        endTime: string
       }
     }
   | {
@@ -20,9 +21,10 @@ export type EventPopupConfig =
       edit: {
         id: string
         name: string
-        date: string
-        start: string
-        end: string
+        startDate: string
+        endDate: string
+        startTime: string
+        endTime: string
       }
     }
 

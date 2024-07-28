@@ -56,9 +56,10 @@ export const CalendarEventMenu = ({
       edit: {
         id: event.id,
         name: event.title,
-        date: format(event.start, 'yyyy-MM-dd'),
-        start: format(event.start, 'HH:mm'),
-        end: format(event.end, 'HH:mm')
+        startDate: format(event.start, 'yyyy-MM-dd'),
+        endDate: format(event.end, 'yyyy-MM-dd'),
+        startTime: format(event.start, 'HH:mm'),
+        endTime: format(event.end, 'HH:mm')
       }
     })
     toggleEventPopup()
