@@ -71,7 +71,7 @@ const CalendarEvent = ({
           </div>
         </PopoverTrigger>
         <PopoverContent side="right" sideOffset={10} className="w-fit">
-          <CalendarEventPopover tags={event.extendedProps.tags} />
+          <CalendarEventPopover event={event} />
         </PopoverContent>
       </Popover>
     </div>
