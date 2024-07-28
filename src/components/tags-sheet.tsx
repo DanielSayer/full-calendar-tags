@@ -65,6 +65,7 @@ export function TagsSheet() {
     mutationFn: addTagToEvent,
     onSuccess: () => {
       toast.success('Tag added to event', { duration: 1500 })
+      client.invalidateQueries({ queryKey: ['events'] })
     },
     onError: (error) => {
       toast.error(error.message)

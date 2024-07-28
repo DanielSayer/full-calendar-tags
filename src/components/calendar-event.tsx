@@ -70,7 +70,7 @@ const CalendarEvent = ({
             </ContextMenu>
           </div>
         </PopoverTrigger>
-        <PopoverContent side="right" sideOffset={10} className="w-fit">
+        <PopoverContent side="right" sideOffset={10} className="w-fit max-w-72">
           <CalendarEventPopover event={event} />
         </PopoverContent>
       </Popover>

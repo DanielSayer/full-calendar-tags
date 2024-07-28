@@ -1,4 +1,4 @@
-import { deleteEvent } from '@/actions/events'
+import { deleteEvent, duplicateEvent } from '@/actions/events'
 import { EditEventDates } from '@/hooks/useCreateEventDialog'
 import useTags from '@/hooks/useTags'
 import { useMutation } from '@tanstack/react-query'
@@ -40,6 +40,14 @@ export const CalendarEventMenu = ({
     }
   })
 
+  const { mutateAsync: duplicateEventAsync } = useMutation({
+    mutationFn: duplicateEvent,
+    onSuccess: () => {
+      toast.success('Event duplicated')
+      refetch()
+    }
+  })
+
   const handleEdit = () => {
     handleClickEdit({
       id: event.id,
@@ -58,6 +66,9 @@ export const CalendarEventMenu = ({
   return (
     <ContextMenuContent>
       <ContextMenuItem onClick={() => handleEdit()}>Edit Event</ContextMenuItem>
+      <ContextMenuItem onClick={() => duplicateEventAsync({ id: event.id })}>
+        Duplicate Event
+      </ContextMenuItem>
       <ContextMenuSub>
         <ContextMenuSubTrigger>Add Tag</ContextMenuSubTrigger>
         <ContextMenuSubContent className="max-h-40 overflow-y-auto">

@@ -12,10 +12,13 @@ export type Event = {
   tags: Tag[]
 }
 
-export const getEvents = async (dateRange: DateRange) => {
+const getAllEvents = async () => {
   await delay(250)
-  const events = JSON.parse(localStorage.getItem('events') || '[]') as Event[]
+  return JSON.parse(localStorage.getItem('events') || '[]') as Event[]
+}
 
+export const getEvents = async (dateRange: DateRange) => {
+  const events = await getAllEvents()
   return events.filter((event) => {
     return (
       dateRange.start <= new Date(event.start) &&
@@ -46,8 +49,7 @@ const createEvent = async (event: {
   start: string
   end: string
 }) => {
-  await delay(500)
-  const events = JSON.parse(localStorage.getItem('events') || '[]') as Event[]
+  const events = await getAllEvents()
   const newEvent: Event = {
     id: crypto.randomUUID(),
     name: event.name || 'Untitled',
@@ -62,8 +64,7 @@ export const addTagToEvent = async (request: {
   eventId: string
   tagId: string
 }) => {
-  await delay(250)
-  const events = JSON.parse(localStorage.getItem('events') || '[]') as Event[]
+  const events = await getAllEvents()
   const event = events.find((e) => e.id === request.eventId)
   if (!event) {
     throw Error('Event not found')
@@ -84,8 +85,7 @@ export const removeTagFromEvent = async (req: {
   eventId: string
   tagId: string
 }) => {
-  await delay(250)
-  const events = JSON.parse(localStorage.getItem('events') || '[]') as Event[]
+  const events = await getAllEvents()
   const event = events.find((e) => e.id === req.eventId)
   if (!event) {
     throw Error('Event not found')
@@ -97,10 +97,25 @@ export const removeTagFromEvent = async (req: {
 }
 
 export const deleteEvent = async (req: { id: string }) => {
-  await delay(250)
-  const events = JSON.parse(localStorage.getItem('events') || '[]') as Event[]
+  const events = await getAllEvents()
   const updatedEvents = events.filter((e) => e.id !== req.id)
   localStorage.setItem('events', JSON.stringify(updatedEvents))
+}
+
+export const duplicateEvent = async (req: { id: string }) => {
+  const events = await getAllEvents()
+  const event = events.find((e) => e.id === req.id)
+  if (!event) {
+    throw Error('Event not found')
+  }
+  const newEvent: Event = {
+    id: crypto.randomUUID(),
+    name: event.name,
+    start: event.start,
+    end: event.end,
+    tags: event.tags
+  }
+  localStorage.setItem('events', JSON.stringify([...events, newEvent]))
 }
 
 export const updateEvent = async (req: {
@@ -109,7 +124,7 @@ export const updateEvent = async (req: {
   start: string
   end: string
 }) => {
-  const events = JSON.parse(localStorage.getItem('events') || '[]') as Event[]
+  const events = await getAllEvents()
   const event = events.find((e) => e.id === req.id)
   if (!event) {
     throw Error('Event not found')

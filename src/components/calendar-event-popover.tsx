@@ -9,15 +9,22 @@ type CalendarEventPopoverProps = {
   event: CalendarEventItem
 }
 const CalendarEventPopover = ({ event }: CalendarEventPopoverProps) => {
-  const formatDate = (date: string) => {
+  const formatTime = (date: string) => {
     const dateObj = new Date(date)
     return format(dateObj, 'hh:mm a')
   }
+  const formatDate = (date: string) => {
+    const dateObj = new Date(date)
+    return format(dateObj, 'dd MMM yyyy')
+  }
   return (
     <div>
-      <h3 className="text-sm font-semibold">{event.title}</h3>
+      <h3 className="flex break-words text-sm font-semibold">{event.title}</h3>
       <p className="mb-1 text-xs text-muted-foreground">
-        {formatDate(event.start)} - {formatDate(event.end)}
+        {formatDate(event.start)}
+      </p>
+      <p className="mb-1 text-xs text-muted-foreground">
+        {formatTime(event.start)} - {formatTime(event.end)}
       </p>
       <p className="mb-1 text-xs font-bold text-muted-foreground">Tags:</p>
       <EventPopoverTags tags={event.extendedProps.tags} />
