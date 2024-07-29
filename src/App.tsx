@@ -20,7 +20,13 @@ function App() {
     onMonthChange
   } = useCalendar()
 
-  const { events, handleEventChange, handleSelect } = useCalendarEvents({
+  const {
+    events,
+    selectedTagIds,
+    handleEventChange,
+    handleSelect,
+    handleTagSelect
+  } = useCalendarEvents({
     dateRange
   })
 
@@ -41,7 +47,11 @@ function App() {
             onMonthChange={onMonthChange}
             onSelect={handleSelectDate}
           />
-          <TagsSection activeTagId={activeTagId} />
+          <TagsSection
+            activeTagId={activeTagId}
+            selectedTagIds={selectedTagIds}
+            handleSelectTag={handleTagSelect}
+          />
         </div>
         <div className="w-full">
           <EventCalendar

@@ -19,6 +19,7 @@ export type CalendarEventItem = {
 const useCalendarEvents = ({ dateRange }: { dateRange: DateRange }) => {
   const { configureEventPopup, toggleEventPopup } = usePopups()
   const [localEvents, setLocalEvents] = useState<CalendarEventItem[]>([])
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
 
   const { data } = useQuery({
     queryKey: ['events', dateRange],
@@ -31,19 +32,27 @@ const useCalendarEvents = ({ dateRange }: { dateRange: DateRange }) => {
       setLocalEvents([])
       return
     }
-    const events: CalendarEventItem[] = data.map((event) => {
-      return {
-        id: event.id,
-        title: event.name,
-        start: event.start,
-        end: event.end,
-        extendedProps: {
-          tags: event.tags
+    const events: CalendarEventItem[] = data
+      .filter(
+        (event) =>
+          selectedTagIds.length === 0 ||
+          selectedTagIds.every((tagId) =>
+            event.tags.some((tag) => tagId === tag.id)
+          )
+      )
+      .map((event) => {
+        return {
+          id: event.id,
+          title: event.name,
+          start: event.start,
+          end: event.end,
+          extendedProps: {
+            tags: event.tags
+          }
         }
-      }
-    })
+      })
     setLocalEvents(events)
-  }, [data])
+  }, [data, selectedTagIds])
 
   const { mutate } = useMutation({
     mutationFn: updateEvent
@@ -89,10 +98,20 @@ const useCalendarEvents = ({ dateRange }: { dateRange: DateRange }) => {
     toggleEventPopup()
   }
 
+  const handleSelectTag = (id: string) => {
+    if (selectedTagIds.includes(id)) {
+      setSelectedTagIds(selectedTagIds.filter((t) => t !== id))
+    } else {
+      setSelectedTagIds([...selectedTagIds, id])
+    }
+  }
+
   return {
     events: localEvents,
+    selectedTagIds,
     handleSelect,
-    handleEventChange
+    handleEventChange,
+    handleTagSelect: handleSelectTag
   }
 }
 
