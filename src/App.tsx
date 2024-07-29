@@ -7,6 +7,7 @@ import { TagsSection } from './components/tags-section'
 import useCalendar from './hooks/useCalendar'
 import useDragAndDropTags from './hooks/useDragAndDropTags'
 import useCalendarEvents from './hooks/useCalendarEvents'
+import { TagsSheet } from './components/tags-sheet'
 
 function App() {
   const {
@@ -29,6 +30,7 @@ function App() {
   return (
     <DndContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
       <CreateEventButton />
+      <TagsSheet />
       <div className="flex p-4 lg:gap-8">
         <div className="hidden w-[276px] lg:block">
           <h1 className="my-2 text-lg font-semibold">Calendar</h1>

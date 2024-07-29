@@ -1,17 +1,16 @@
 import { type RefObject, useEffect, useState } from 'react'
-import useMouseControls from './useMouseControls'
 
 interface UseHoverProps {
   debounce?: number
+  isMouseDown?: boolean
 }
 
 export function useHover<T extends HTMLElement = HTMLElement>(
   elementRef: RefObject<T>,
-  { debounce = 0 }: UseHoverProps = {}
+  { debounce = 0, isMouseDown = false }: UseHoverProps = {}
 ): boolean {
   const [isHovering, setIsHovering] = useState<boolean>(false)
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null)
-  const { isMouseDown } = useMouseControls()
 
   useEffect(() => {
     if (isMouseDown) {

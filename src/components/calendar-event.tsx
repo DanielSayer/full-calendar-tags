@@ -1,5 +1,6 @@
 import { CalendarEventItem } from '@/hooks/useCalendarEvents'
 import { useHover } from '@/hooks/useHover'
+import useMouseControls from '@/hooks/useMouseControls'
 import { generateCalendarId } from '@/lib/calendarUtils'
 import { cn } from '@/lib/utils'
 import { useDroppable } from '@dnd-kit/core'
@@ -23,8 +24,9 @@ const CalendarEvent = ({
   addTagAsync,
   removeTagAsync
 }: EventProps) => {
+  const { isMouseDown } = useMouseControls()
   const eventRef = useRef<HTMLDivElement>(null)
-  const isHovering = useHover(eventRef, { debounce: 250 })
+  const isHovering = useHover(eventRef, { debounce: 250, isMouseDown })
   const [cacheBreaker, setCacheBreaker] = useState<number>(0)
   if (!event) {
     throw new Error('Event is undefined')

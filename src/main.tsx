@@ -8,23 +8,21 @@ import { MouseProvider } from './providers/mouse-provider.tsx'
 
 import '@/styles/globals.css'
 import { PopupProvider } from './providers/popup-provider.tsx'
-import { TagsSheet } from './components/tags-sheet.tsx'
 
 const queryClient = new QueryClient()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <MouseProvider>
-      <PopupProvider>
-        <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <MouseProvider>
+        <PopupProvider>
           <React.StrictMode>
             <App />
-            <TagsSheet />
             <ReactQueryDevtools />
             <Toaster />
           </React.StrictMode>
-        </QueryClientProvider>
-      </PopupProvider>
-    </MouseProvider>
+        </PopupProvider>
+      </MouseProvider>
+    </QueryClientProvider>
   </React.StrictMode>
 )
